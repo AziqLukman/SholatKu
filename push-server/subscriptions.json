@@ -1,0 +1,45 @@
+[
+  {
+    "subscription": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d-QBrbkZlfk:APA91bGfHIshYJ8zPJQCAL0XgbLGSJIwlXAdWVP5ju_Xlil1vzTI0dL6l9e0gAKFY5_23ovxmphz3YYTLKlSco1r_leLyBAvJRltBM0lqxCITRQJVFoG_PjfkUoIoKEuinLoUWX1twsW",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BMwZ6YCMc0NWMPvTDZLXxexSpj-q5dcUrt5B28v16jqg6UtY4xFs9Q_wsIBk2Rv5GQK99jFWG1ZzfmmGq1VQUOg",
+        "auth": "PxRpuR-YpBqUuC7pltgj5A"
+      }
+    },
+    "lat": -7.2344,
+    "lng": 112.6077,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-02-16T00:09:03.531Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://web.push.apple.com/QPAgQYT9xoj1HJoLuU3oKDihhG40w5xNJQ6ddMgYqTt0frkolOqJBjkn4F24JUelKaXVmVAfnx4VlY6wUszR6g0OITBeqZ7SJ-lCO0nUhzR1wImOEDSIp5BEii9TzkBvateFEER-7KgpRHSy0AwU4SBDplh42rE_t_2wkoktJ5M",
+      "keys": {
+        "p256dh": "BH2CI9lOQtG7OTEVlyINkmHmGdiVd64fB43HFrFMWjmZd6xyp2XDJrW54YH56fgbcHbmKywAvIHoaO4PbEhKOvA",
+        "auth": "AXSfRxzQzUNwkI_5oXuMBg"
+      }
+    },
+    "lat": -7.2352717061385885,
+    "lng": 112.61247938567743,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-02-14T05:28:47.128Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://web.push.apple.com/QIfB92ZIqZ4I6BJac-qXzL0j-A0bMrhwcG0QeUDyiVnHJSsbNTaFBavOMOwqVwCE2_7RNXh-mUpDQK6l46tnaVaMpbtqOpXm0SLzMsTgP0InN1t_f0jV4OMVlibcMrdnZIfeWmBbBMfxegnREC834YbGP1VR7j-EHv0T3JxNCbU",
+      "keys": {
+        "p256dh": "BASqL51YCEiWJV-Xq2HhE4lnNcFY9IfX0s5962N3IrLVpkR0GL71gsHMLcP9IWSRksijRS_heh7F-v5Ecwju_RE",
+        "auth": "oSnlL1V15mtTJiBr68EvAw"
+      }
+    },
+    "lat": -7.3101016654466,
+    "lng": 112.74982958347164,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-02-15T09:38:44.102Z"
+  }
+]
