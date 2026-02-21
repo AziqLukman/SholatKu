@@ -5,28 +5,28 @@ import { useApp } from '../context/AppContext'
 const changelogData = [
   {
     version: '1.3.0',
-    date: '22 Feb 2026',
+    date: '21 Feb 2026',
     isNew: true,
     items: [
       {
-        title: 'Misi Ramadhan',
-        description: 'Fitur Misi Sholat, Puasa, dan Dzikir harian selama bulan Ramadhan.'
+        title: 'Animasi Idul Fitri',
+        description: 'Penambahan perayaan hari kemenangan berupa animasi tirai merah dan jatuhan ketupat yang otomatis muncul pada 2 minggu pertama bulan Syawal.'
       },
       {
-        title: 'Sistem Gamifikasi (XP & Streak)',
-        description: 'Fitur pengumpulan stempel (Streak hijau/merah), akumulasi XP, dan perolehan Level ibadah harian.'
+        title: 'Penyempurnaan Streak & Title',
+        description: 'Peningkatan sistem streak harian dengan animasi api dan penyempurnaan tampilan title level ibadah.'
       },
       {
-        title: 'Smart Mission Lock',
-        description: 'Sistem pintar yang otomatis "mengunci" menu misi Ramadhan dan menghentikan laju streak/XP tepat ketika bulan Ramadhan berakhir (masuk 1 Syawal).'
+        title: 'Smart Mission Lock (Periode Bulan)',
+        description: 'Perbaikan logika periode Ramadhan agar misi otomatis terkunci saat memasuki 1 Syawal dan streak/XP berhenti terakumulasi.'
       },
       {
-        title: 'Animasi Streak & Idul Fitri',
-        description: 'Penambahan animasi api streak & perayaan hari kemenangan berupa animasi tirai merah dan jatuhan ketupat yang akan otomatis "meledak/terbuka" pada 2 minggu pertama bulan Syawal.'
+        title: 'Halaman Tentang Aplikasi & Changelog',
+        description: 'Menambahkan menu "Tentang Aplikasi" di Setelan dengan popup riwayat pembaruan interaktif.'
       },
       {
         title: 'Perbaikan Bug',
-        description: 'Memperbaiki logika periode isRamadhan dan memisahkan struktur komponen (RamadhanTracker.jsx) agar codebase lebih rapi.'
+        description: 'Memperbaiki Invalid Hook Call pada navigasi dan tampilan modal di mode mobile (React Portal).'
       }
     ]
   },
@@ -40,16 +40,16 @@ const changelogData = [
         description: 'Fitur baru untuk menghitung dzikir (Subhanallah, Alhamdulillah, Allahuakbar, dll) dengan desain counter yang mulus dan interaktif.'
       },
       {
-        title: 'Push Notifications',
-        description: 'Penambahan sistem notifikasi canggih di latar belakang untuk Pengingat Waktu Sholat dan Peringatan Imsak/Sahur.'
+        title: 'Misi Ramadhan',
+        description: 'Fitur pelacak Misi Sholat, Puasa, dan Dzikir harian selama bulan Ramadhan.'
       },
       {
-        title: 'Progressive Web App (PWA)',
-        description: 'SholatKu kini bisa di-install atau ditambahkan ke Home Screen (Layar Utama) HP seperti aplikasi biasa, dan bisa berjalan lebih responsif.'
+        title: 'Sistem Gamifikasi (XP & Streak)',
+        description: 'Fitur pengumpulan stempel (Streak hijau/merah), animasi api streak, akumulasi XP, dan perolehan Level ibadah harian.'
       },
       {
         title: 'Perbaikan Bug & Environment',
-        description: 'Menyempurnakan konfigurasi vite-plugin-pwa untuk caching aset offline dan menstabilkan sistem sinkronisasi notifikasi (service worker).'
+        description: 'Memisahkan struktur komponen (RamadhanTracker.jsx, Tasbih.jsx) agar codebase lebih modular dan rapi.'
       }
     ]
   },
@@ -68,11 +68,19 @@ const changelogData = [
       },
       {
         title: 'Kalender Bulanan ("Lihat Bulanan")',
-        description: 'Perbaikan dan penyempurnaan UI kalender jadwal sholat agar pengguna bisa melihat tabel jadwal sebulan penuh dengan rapi tanpa harus mencari hari per hari.'
+        description: 'Perbaikan dan penyempurnaan UI kalender jadwal sholat agar pengguna bisa melihat tabel jadwal sebulan penuh dengan rapi.'
+      },
+      {
+        title: 'Push Notifications',
+        description: 'Penambahan sistem notifikasi canggih di latar belakang untuk Pengingat Waktu Sholat dan Peringatan Imsak/Sahur.'
+      },
+      {
+        title: 'Progressive Web App (PWA)',
+        description: 'SholatKu kini bisa di-install atau ditambahkan ke Home Screen HP seperti aplikasi biasa.'
       },
       {
         title: 'Perbaikan Bug',
-        description: 'Memperbaiki masalah pada tampilan kalender yang bertumpuk dan tata letak responsif tabel bulanan.'
+        description: 'Memperbaiki masalah tampilan kalender yang bertumpuk, tata letak responsif, dan konfigurasi vite-plugin-pwa untuk caching offline.'
       }
     ]
   },
@@ -138,7 +146,7 @@ export default function Changelog({ onClose }) {
           
           <div className="bg-slate-100 dark:bg-slate-700/50 px-4 py-2 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-2">
             <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <span>Update: 22 Februari 2026</span>
+            <span>Update: 21 Februari 2026</span>
           </div>
         </div>
 
