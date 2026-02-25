@@ -38,7 +38,7 @@ function AppContent() {
   }, [geo.position, geo.loading])
 
   // Waktu sholat
-  const { prayerTimes: fetchedTimes, hijri, loading: apiLoading } = usePrayerTimes(location.lat, location.lng)
+  const { prayerTimes: fetchedTimes, hijri, loading: apiLoading } = usePrayerTimes(location)
 
   useEffect(() => {
     if (fetchedTimes) {

@@ -15,7 +15,7 @@ export function AppProvider({ children }) {
   // Location
   const [location, setLocation] = useState(() => {
     const saved = localStorage.getItem('sholatku-location')
-    return saved ? JSON.parse(saved) : { lat: -6.2088, lng: 106.8456, city: 'Jakarta, Indonesia' }
+    return saved ? JSON.parse(saved) : { lat: -6.2088, lng: 106.8456, city: 'Jakarta, Indonesia', provinsi: 'DKI Jakarta', kabkota: 'Kota Jakarta' }
   })
 
   // Prayer times
@@ -39,6 +39,18 @@ export function AppProvider({ children }) {
   const [imsakNotifEnabled, setImsakNotifEnabled] = useState(() => {
     const saved = localStorage.getItem('sholatku-imsak-notif')
     return saved ? JSON.parse(saved) : false
+  })
+
+  // Haid Mode (menstruation mode for women)
+  const [haidMode, setHaidMode] = useState(() => {
+    const saved = localStorage.getItem('sholatku-haid-mode')
+    return saved ? JSON.parse(saved) : false
+  })
+
+  // Ramadhan start date override (format: 'YYYY-MM-DD' or null for auto)
+  const [ramadhanStartDate, setRamadhanStartDate] = useState(() => {
+    const saved = localStorage.getItem('sholatku-ramadhan-start')
+    return saved ? JSON.parse(saved) : null
   })
 
   // Persist dark mode
@@ -71,6 +83,16 @@ export function AppProvider({ children }) {
     localStorage.setItem('sholatku-imsak-notif', JSON.stringify(imsakNotifEnabled))
   }, [imsakNotifEnabled])
 
+  // Persist haid mode
+  useEffect(() => {
+    localStorage.setItem('sholatku-haid-mode', JSON.stringify(haidMode))
+  }, [haidMode])
+
+  // Persist ramadhan start date
+  useEffect(() => {
+    localStorage.setItem('sholatku-ramadhan-start', JSON.stringify(ramadhanStartDate))
+  }, [ramadhanStartDate])
+
   const toggleDarkMode = () => setDarkMode(prev => !prev)
 
   const addFavorite = (loc) => {
@@ -94,6 +116,8 @@ export function AppProvider({ children }) {
     favorites, addFavorite, removeFavorite,
     notificationsEnabled, setNotificationsEnabled,
     imsakNotifEnabled, setImsakNotifEnabled,
+    haidMode, setHaidMode,
+    ramadhanStartDate, setRamadhanStartDate,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

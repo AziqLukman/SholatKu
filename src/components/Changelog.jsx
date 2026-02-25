@@ -4,9 +4,67 @@ import { useApp } from '../context/AppContext'
 
 const changelogData = [
   {
+    version: '1.5.0',
+    date: '25 Feb 2026',
+    isNew: true,
+    items: [
+      {
+        title: 'Jadwal Sholat Kemenag RI 🕌',
+        description: 'Sumber data jadwal sholat diubah ke EQuran.id (Kemenag RI) agar waktu sholat lebih akurat untuk seluruh Indonesia. Mendukung 517 kab/kota di 34 provinsi.'
+      },
+      {
+        title: 'Fallback Otomatis untuk Luar Negeri',
+        description: 'Untuk lokasi di luar Indonesia, jadwal sholat otomatis menggunakan Aladhan API sebagai fallback. Pengguna tidak perlu mengatur apapun.'
+      },
+      {
+        title: 'Pengaturan Awal Ramadhan 🌙',
+        description: 'Fitur baru di Setelan untuk mengatur tanggal mulai Ramadhan secara manual. Cocok untuk menangani perbedaan penetapan antar ormas (NU, Muhammadiyah, Pemerintah).'
+      },
+      {
+        title: 'Tahun Hijriah Otomatis',
+        description: 'Tahun Hijriah kini dihitung otomatis, tidak perlu update manual setiap tahun baru Hijriah.'
+      },
+      {
+        title: 'Perbaikan Bug',
+        description: 'Memperbaiki waktu sholat yang terlalu cepat dari sumber sebelumnya, dan mengoptimasi jumlah request API agar lebih hemat bandwidth.'
+      }
+    ]
+  },
+  {
+    version: '1.4.0',
+    date: '23 Feb 2026',
+    isNew: false,
+    items: [
+      {
+        title: 'Mode Haid untuk Wanita 🌸',
+        description: 'Fitur baru di Setelan yang memungkinkan pengguna wanita mengaktifkan mode haid. Misi sholat & puasa otomatis disembunyikan, streak tetap terjaga.'
+      },
+      {
+        title: 'Streak Haid-Aware',
+        description: 'Sistem streak yang cerdas — hari-hari haid dihitung berdasarkan misi yang tersedia saja, sehingga streak tidak putus.'
+      },
+      {
+        title: 'Banner & Badge Mode Haid',
+        description: 'Indikator visual 🌸 di header gamification dan banner pink di halaman Misi Ramadhan saat mode aktif.'
+      },
+      {
+        title: 'Kalender Ramadhan Interaktif 📅',
+        description: 'Grid kalender 30 hari Ramadhan yang bisa diklik untuk berpindah tanggal secara cepat, lengkap dengan indikator status selesai, sebagian, haid, dan belum.'
+      },
+      {
+        title: 'Navigasi Terbatas Ramadhan',
+        description: 'Arrow navigasi hari dibatasi hanya di bulan Ramadhan (1-30) agar tidak keluar dari periode misi.'
+      },
+      {
+        title: 'Perbaikan Bug',
+        description: 'Memperbaiki tampilan misi hari sebelumnya agar sesuai status haid hari itu, bukan status haid saat ini.'
+      }
+    ]
+  },
+  {
     version: '1.3.0',
     date: '21 Feb 2026',
-    isNew: true,
+    isNew: false,
     items: [
       {
         title: 'Animasi Idul Fitri',
@@ -142,11 +200,11 @@ export default function Changelog({ onClose }) {
             <img src="/icon.png" alt="Logo SholatKu" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">SholatKu</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.3.0</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.5.0</p>
           
           <div className="bg-slate-100 dark:bg-slate-700/50 px-4 py-2 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-2">
             <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <span>Update: 21 Februari 2026</span>
+            <span>Update: 25 Februari 2026</span>
           </div>
         </div>
 

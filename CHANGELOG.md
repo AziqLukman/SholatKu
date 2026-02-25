@@ -6,6 +6,22 @@ Pengembangan aplikasi ini mengikuti kaidah [*Semantic Versioning*](https://semve
 
 ---
 
+## [v1.4.0] - 23-02-2026
+**Mode Haid untuk Wanita**
+Fokus pada fitur khusus wanita agar tetap bisa menjaga streak saat berhalangan.
+
+### 🌸 Fitur Baru
+- **Mode Haid**: Fitur baru di Setelan yang memungkinkan pengguna wanita mengaktifkan mode haid. Misi sholat & puasa otomatis disembunyikan, hanya menyisakan misi yang bisa dilakukan (Dzikir Pagi, Dzikir Petang, Sedekah).
+- **Streak Haid-Aware**: Sistem streak yang cerdas — hari-hari haid dihitung berdasarkan misi yang tersedia saja, sehingga streak tidak putus.
+- **Banner & Badge Mode Haid**: Indikator visual 🌸 di header gamification dan banner pink di halaman Misi Ramadhan saat mode aktif.
+- **Kalender Ramadhan Interaktif**: Grid kalender 30 hari Ramadhan yang bisa diklik untuk berpindah tanggal secara cepat, dengan indikator status (selesai/sebagian/haid/belum).
+- **Navigasi Terbatas Ramadhan**: Arrow navigasi hari dibatasi hanya di bulan Ramadhan (1-30) agar tidak keluar dari periode misi.
+
+### 🐛 Perbaikan Bug
+- Memperbaiki tampilan misi hari sebelumnya agar sesuai status haid hari itu (bukan status haid saat ini).
+
+---
+
 ## [v1.3.0] - 21-02-2026
 **Animasi Idul Fitri, Penyempurnaan Streak & Changelog**
 Fokus pada pengalaman spesial Lebaran, penyempurnaan sistem gamifikasi, dan dokumentasi aplikasi.

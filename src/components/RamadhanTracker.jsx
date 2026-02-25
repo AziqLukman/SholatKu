@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
+import { fetchEquranSchedule } from '../data/indonesiaLocations'
 
 const TRACKER_KEY = 'sholatku-ramadhan-tracker-v1'
 
@@ -63,8 +64,11 @@ const INITIAL_MISSIONS = [
   { id: 'quran', label: 'Baca Al Quran', sub: 'Tilawah', icon: 'menu_book', type: 'action', actionLabel: 'Buka Al Quran', actionLink: 'doa', question: 'Apakah sudah membaca alquran hari ini?' },
 ]
 
+// Missions blocked during Haid mode (sholat, puasa-related)
+const HAID_BLOCKED_MISSIONS = ['sahur', 'subuh', 'dhuhur', 'ashar', 'maghrib', 'isya', 'tarawih', 'witir', 'puasa', 'buka', 'quran']
+
 export default function RamadhanTracker() {
-  const { setActiveTab } = useApp()
+  const { setActiveTab, haidMode, setHaidMode, location, ramadhanStartDate } = useApp()
   const [trackerData, setTrackerData] = useState({})
   const [expandedId, setExpandedId] = useState(null)
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -80,6 +84,7 @@ export default function RamadhanTracker() {
   const [hijriMonthNum, setHijriMonthNum] = useState(null) // track month number for pre/post detection
   const [hijriDay, setHijriDay] = useState(null) // track day for 2-week post-Ramadhan window
   const [showEidCelebration, setShowEidCelebration] = useState(false) // Eid celebration animation
+  const [showCalendar, setShowCalendar] = useState(false) // Calendar grid toggle
 
   // Helper to format date for API: DD-MM-YYYY
   const formatDateForApi = (date) => {
@@ -90,12 +95,43 @@ export default function RamadhanTracker() {
     return `${dd}-${mm}-${yyyy}`
   }
 
-  // Check if today is still Ramadhan — dedicated check on mount
+  // Check if today is still Ramadhan — custom date override or API check
   useEffect(() => {
     const checkRamadhan = async () => {
+      // ─── CUSTOM DATE OVERRIDE ───
+      if (ramadhanStartDate) {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const startDate = new Date(ramadhanStartDate)
+        startDate.setHours(0, 0, 0, 0)
+        const endDate = new Date(startDate)
+        endDate.setDate(endDate.getDate() + 30) // Ramadhan = 29-30 days
+
+        const isRam = today >= startDate && today < endDate
+        const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24))
+        const ramDay = daysSinceStart + 1 // 1-indexed
+
+        console.log('[SholatKu] Custom Ramadhan check — Start:', ramadhanStartDate, 'Day:', ramDay, '→ isRamadhan:', isRam)
+        setIsRamadhan(isRam)
+
+        if (isRam) {
+          setHijriMonthNum(9) // Ramadhan
+          setHijriDay(ramDay)
+        } else if (today >= endDate) {
+          // Syawal period
+          const daysSinceEnd = Math.floor((today - endDate) / (1000 * 60 * 60 * 24))
+          setHijriMonthNum(10) // Syawal
+          setHijriDay(daysSinceEnd + 1)
+        }
+        return
+      }
+
+      // ─── AUTO: API check ───
       try {
         const todayStr = formatDateForApi(new Date())
-        const res = await fetch(`https://api.aladhan.com/v1/timings/${todayStr}?latitude=-6.2088&longitude=106.8456&method=20`)
+        const lat = location?.lat || -6.2088
+        const lng = location?.lng || 106.8456
+        const res = await fetch(`https://api.aladhan.com/v1/timings/${todayStr}?latitude=${lat}&longitude=${lng}&method=20`)
         const json = await res.json()
         if (json.code === 200 && json.data) {
           const monthNum = json.data.date.hijri.month.number
@@ -109,51 +145,122 @@ export default function RamadhanTracker() {
       } catch (e) { console.error('Ramadhan check failed:', e) }
     }
     checkRamadhan()
-  }, [])
+  }, [ramadhanStartDate])
 
   // Fetch Data (prayer times + hijri for selected date)
   useEffect(() => {
     const fetchData = async () => {
         setLoading(true)
         try {
-            const dateStr = formatDateForApi(selectedDate)
-            const res = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=-6.2088&longitude=106.8456&method=20`)
-            const json = await res.json()
-            
-            if (json.code === 200 && json.data) {
+            const selDate = new Date(selectedDate)
+            const mm = selDate.getMonth() + 1
+            const yyyy = selDate.getFullYear()
+            const dd = selDate.getDate()
+            let prayerTimesResult = null
+
+            // ─── PRIMARY: equran.id (Kemenag) for Indonesia ───
+            if (location?.provinsi && location?.kabkota) {
+              const jadwal = await fetchEquranSchedule(location.provinsi, location.kabkota, mm, yyyy)
+              if (jadwal) {
+                const todaySchedule = jadwal.find(j => j.tanggal === dd)
+                if (todaySchedule) {
+                  prayerTimesResult = [
+                    { name: 'Subuh', time: todaySchedule.subuh },
+                    { name: 'Dzuhur', time: todaySchedule.dzuhur },
+                    { name: 'Ashar', time: todaySchedule.ashar },
+                    { name: 'Maghrib', time: todaySchedule.maghrib },
+                    { name: 'Isya', time: todaySchedule.isya },
+                  ]
+                  console.log('[SholatKu] ✅ Ramadhan prayer times from equran.id')
+                }
+              }
+            }
+
+            // ─── FALLBACK: aladhan.com ───
+            if (!prayerTimesResult) {
+              const dateStr = formatDateForApi(selectedDate)
+              const lat = location?.lat || -6.2088
+              const lng = location?.lng || 106.8456
+              const res = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lng}&method=20`)
+              const json = await res.json()
+              if (json.code === 200 && json.data) {
                 const timings = json.data.timings
-                const h = json.data.date.hijri
-                const monthNumber = Number(h.month.number)
+                prayerTimesResult = [
+                  { name: 'Subuh', time: timings.Fajr.replace(/\s*\(.*\)/, '') },
+                  { name: 'Dzuhur', time: timings.Dhuhr.replace(/\s*\(.*\)/, '') },
+                  { name: 'Ashar', time: timings.Asr.replace(/\s*\(.*\)/, '') },
+                  { name: 'Maghrib', time: timings.Maghrib.replace(/\s*\(.*\)/, '') },
+                  { name: 'Isya', time: timings.Isha.replace(/\s*\(.*\)/, '') },
+                ]
+              }
+            }
+
+            // ─── Hijri date from aladhan.com + Ramadhan status ───
+            const dateStr = formatDateForApi(selectedDate)
+            const lat = location?.lat || -6.2088
+            const lng = location?.lng || 106.8456
+
+            // If custom start date, derive hijri-like day for Ramadhan calendar
+            if (ramadhanStartDate) {
+                const startDate = new Date(ramadhanStartDate)
+                startDate.setHours(0, 0, 0, 0)
+                const selDateClean = new Date(selectedDate)
+                selDateClean.setHours(0, 0, 0, 0)
+                const daysSinceStart = Math.floor((selDateClean - startDate) / (1000 * 60 * 60 * 24))
+                const customDay = daysSinceStart + 1
+
                 setDailyData({
-                    prayerTimes: [
-                        { name: 'Subuh', time: timings.Fajr.replace(/\s*\(.*\)/, '') },
-                        { name: 'Dzuhur', time: timings.Dhuhr.replace(/\s*\(.*\)/, '') },
-                        { name: 'Ashar', time: timings.Asr.replace(/\s*\(.*\)/, '') },
-                        { name: 'Maghrib', time: timings.Maghrib.replace(/\s*\(.*\)/, '') },
-                        { name: 'Isya', time: timings.Isha.replace(/\s*\(.*\)/, '') },
-                    ],
+                    prayerTimes: prayerTimesResult,
                     hijri: {
-                        day: h.day,
-                        month: h.month.en,
-                        monthNumber: monthNumber,
-                        year: h.year,
-                        full: `${h.day} ${h.month.en} ${h.year} H`
+                        day: String(customDay),
+                        month: 'Ramadhan',
+                        monthNumber: 9,
+                        year: String(new Date(ramadhanStartDate).getFullYear() - 579),
+                        full: `${customDay} Ramadhan ${new Date(ramadhanStartDate).getFullYear() - 579} H`
                     }
                 })
-                // ALSO check Ramadhan status from main fetch (backup for mount check)
-                const todayStr = formatDateForApi(new Date())
-                if (dateStr === todayStr) {
-                    const isRam = monthNumber === 9
-                    console.log('[SholatKu] Fetch check — Hijri:', h.month.en, '#' + monthNumber, '→ isRamadhan:', isRam)
-                    setIsRamadhan(isRam)
-                    setHijriMonthNum(monthNumber)
-                    setHijriDay(Number(h.day))
+            } else {
+                // Fetch hijri from aladhan.com
+                try {
+                    const hijriRes = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lng}&method=20`)
+                    const hijriJson = await hijriRes.json()
+                    
+                    if (hijriJson.code === 200 && hijriJson.data) {
+                        const h = hijriJson.data.date.hijri
+                        const monthNumber = Number(h.month.number)
+                        setDailyData({
+                            prayerTimes: prayerTimesResult,
+                            hijri: {
+                                day: h.day,
+                                month: h.month.en,
+                                monthNumber: monthNumber,
+                                year: h.year,
+                                full: `${h.day} ${h.month.en} ${h.year} H`
+                            }
+                        })
+                        // Backup Ramadhan check (only when no custom date)
+                        const todayStr = formatDateForApi(new Date())
+                        if (dateStr === todayStr) {
+                            const isRam = monthNumber === 9
+                            console.log('[SholatKu] Fetch check — Hijri:', h.month.en, '#' + monthNumber, '→ isRamadhan:', isRam)
+                            setIsRamadhan(isRam)
+                            setHijriMonthNum(monthNumber)
+                            setHijriDay(Number(h.day))
+                        }
+                    } else if (prayerTimesResult) {
+                        setDailyData(prev => ({ ...prev, prayerTimes: prayerTimesResult }))
+                    }
+                } catch (hijriErr) {
+                    console.warn('[SholatKu] Hijri fetch failed:', hijriErr)
+                    if (prayerTimesResult) {
+                        setDailyData(prev => ({ ...prev, prayerTimes: prayerTimesResult }))
+                    }
                 }
             }
         } catch (e) { console.error(e) } finally { setLoading(false) }
     }
     fetchData()
-  }, [selectedDate])
+  }, [selectedDate, location?.provinsi, location?.kabkota, ramadhanStartDate])
 
   // Timer
   useEffect(() => {
@@ -170,6 +277,7 @@ export default function RamadhanTracker() {
   const dateKey = getStorageKey(selectedDate)
 
   // Calculate streak from stored data — count consecutive days with ALL missions completed
+  // Haid-aware: on days marked as haid, only check non-blocked missions
   const calculateStreak = (data) => {
     let count = 0
     const today = new Date()
@@ -183,8 +291,13 @@ export default function RamadhanTracker() {
         if (i === 0) continue // today might not have started yet
         break
       }
-      // Check if ALL missions are completed for this day
-      const allCompleted = INITIAL_MISSIONS.every(mission => {
+      // Determine which missions apply for this day
+      const dayIsHaid = dayData._haidMode === true
+      const missionsToCheck = dayIsHaid
+        ? INITIAL_MISSIONS.filter(m => !HAID_BLOCKED_MISSIONS.includes(m.id))
+        : INITIAL_MISSIONS
+      // Check if ALL applicable missions are completed for this day
+      const allCompleted = missionsToCheck.every(mission => {
         const val = dayData[mission.id]
         if (mission.id === 'puasa') {
           return val && typeof val === 'object' && val.status === true
@@ -253,12 +366,13 @@ export default function RamadhanTracker() {
     // Block updates if Ramadhan is over
     if (!isRamadhan) return
     
-    // Build new mission data
+    // Build new mission data, also persist haid mode status for this day
     const newMissionData = {
       ...trackerData,
       [dateKey]: {
         ...trackerData[dateKey],
-        [missionId]: value
+        [missionId]: value,
+        _haidMode: haidMode,
       }
     }
     
@@ -355,10 +469,24 @@ export default function RamadhanTracker() {
     return { locked: false, time: null }
   }
 
-  // Calculate Progress
+  // Active missions (filtered by haid mode — date-aware)
+  // For today: use current haidMode toggle
+  // For past days: use stored _haidMode flag from that day's data
+  const isToday = (() => {
+    const now = new Date()
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const selStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    return selStart.getTime() === todayStart.getTime()
+  })()
+  const dayHaidActive = isToday ? haidMode : !!(trackerData[dateKey]?._haidMode)
+  const activeMissions = dayHaidActive
+    ? INITIAL_MISSIONS.filter(m => !HAID_BLOCKED_MISSIONS.includes(m.id))
+    : INITIAL_MISSIONS
+
+  // Calculate Progress based on active missions
   const currentData = trackerData[dateKey] || {}
-  const totalMissions = INITIAL_MISSIONS.length
-  const completedCount = INITIAL_MISSIONS.reduce((acc, mission) => {
+  const totalMissions = activeMissions.length
+  const completedCount = activeMissions.reduce((acc, mission) => {
     if (mission.id === 'puasa') {
       return acc + (currentData[mission.id]?.status ? 1 : 0)
     }
@@ -566,7 +694,7 @@ export default function RamadhanTracker() {
               Idul Fitri
             </h2>
             
-            <p className="text-sm md:text-base text-emerald-300 mb-1">1 Syawal 1447 H</p>
+            <p className="text-sm md:text-base text-emerald-300 mb-1">1 Syawal {new Date().getFullYear() - 579} H</p>
             <p className="text-xs md:text-sm text-white/60 mb-6">Mohon Maaf Lahir dan Batin</p>
             
             {/* Achievement recap */}
@@ -607,12 +735,17 @@ export default function RamadhanTracker() {
            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
                 <div className="text-center md:text-left w-full md:w-auto">
                     {/* Streak Badge - always visible */}
-                    <div className="flex items-center justify-center md:justify-start gap-2 mb-2 md:mb-3">
+                    <div className="flex items-center justify-center md:justify-start gap-2 mb-2 md:mb-3 flex-wrap">
                         <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider bg-black/20 px-2 py-0.5 md:py-1 rounded-lg">Level {level}</span>
                         <span className={`flex items-center gap-1 text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 rounded-lg ${streak > 0 ? 'bg-orange-500/90 text-white' : 'bg-white/10 text-white/60'}`}>
                             <span className="material-icons text-[12px] md:text-[14px]">local_fire_department</span>
                             {streak > 0 ? `${streak} Streak 🔥` : '0 Streak'}
                         </span>
+                        {haidMode && (
+                            <span className="flex items-center gap-1 text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 rounded-lg bg-rose-500/90 text-white">
+                                🌸 Mode Haid
+                            </span>
+                        )}
                     </div>
                     <h2 className="text-xl md:text-3xl font-black tracking-tight mb-0.5 text-white drop-shadow-sm">{rank.emoji} {rank.title}</h2>
                     <p className="text-xs md:text-sm opacity-80 font-medium">Terus tingkatkan ibadahmu!</p>
@@ -647,12 +780,90 @@ export default function RamadhanTracker() {
                         <span className="material-icons text-xs md:text-sm">calendar_today</span>
                         <span>{dailyData.hijri ? dailyData.hijri.full : 'Ramadhan 1445 H'}</span>
                     </div>
-                    <div className="flex items-center gap-2 md:gap-3 bg-black/20 backdrop-blur-sm rounded-full p-1 border border-white/10">
-                        <button onClick={() => changeDate(-1)} className="p-1 md:p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all"><span className="material-icons text-base md:text-lg">chevron_left</span></button>
-                        <span className="text-white text-xs md:text-sm font-bold min-w-[80px] md:min-w-[100px] text-center">{dailyData.hijri ? `${dailyData.hijri.day} ${dailyData.hijri.month}` : '...'}</span>
-                        <button onClick={() => changeDate(1)} className="p-1 md:p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all"><span className="material-icons text-base md:text-lg">chevron_right</span></button>
+                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 md:gap-3 bg-black/20 backdrop-blur-sm rounded-full p-1 border border-white/10">
+                            <button onClick={() => { const hDay = Number(dailyData.hijri?.day || 1); if (hDay > 1) changeDate(-1); }} className={`p-1 md:p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all ${Number(dailyData.hijri?.day || 1) <= 1 ? 'opacity-30 pointer-events-none' : ''}`}><span className="material-icons text-base md:text-lg">chevron_left</span></button>
+                            <span className="text-white text-xs md:text-sm font-bold min-w-[80px] md:min-w-[100px] text-center">{dailyData.hijri ? `${dailyData.hijri.day} ${dailyData.hijri.month}` : '...'}</span>
+                            <button onClick={() => { const hDay = Number(dailyData.hijri?.day || 30); if (hDay < 30) changeDate(1); }} className={`p-1 md:p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-all ${Number(dailyData.hijri?.day || 30) >= 30 ? 'opacity-30 pointer-events-none' : ''}`}><span className="material-icons text-base md:text-lg">chevron_right</span></button>
+                        </div>
+                        <button onClick={() => setShowCalendar(!showCalendar)} className={`p-1.5 md:p-2 rounded-full transition-all border ${showCalendar ? 'bg-primary/20 text-primary border-primary/30' : 'bg-white/10 text-white/70 border-white/10 hover:bg-white/20'}`}>
+                            <span className="material-icons text-base md:text-lg">calendar_month</span>
+                        </button>
                     </div>
                 </div>
+
+                {/* Ramadan Calendar Grid */}
+                {showCalendar && dailyData.hijri && (
+                    <div className="bg-black/20 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-white/10 animate-fade-in">
+                        <div className="flex items-center justify-between mb-3">
+                            <p className="text-[10px] md:text-xs font-bold text-white/60 uppercase tracking-wider">Ramadhan {dailyData.hijri.year} H</p>
+                            <button onClick={() => setShowCalendar(false)} className="text-white/40 hover:text-white/70"><span className="material-icons text-sm">close</span></button>
+                        </div>
+                        <div className="grid grid-cols-6 gap-1.5 md:gap-2">
+                            {[...Array(30)].map((_, i) => {
+                                const day = i + 1
+                                const currentHijriDay = Number(dailyData.hijri.day)
+                                const dayDiff = day - currentHijriDay
+                                const dayDate = new Date(selectedDate)
+                                dayDate.setDate(selectedDate.getDate() + dayDiff)
+                                const dayKey = (() => {
+                                    const offset = dayDate.getTimezoneOffset()
+                                    return new Date(dayDate.getTime() - (offset*60*1000)).toISOString().split('T')[0]
+                                })()
+                                const dayData = trackerData[dayKey]
+                                const isSelected = day === currentHijriDay
+                                const todayHijriDay = hijriDay
+                                const isToday = day === todayHijriDay
+                                const isFuture = todayHijriDay ? day > todayHijriDay : false
+
+                                // Check completion status
+                                const dayIsHaid = dayData?._haidMode === true
+                                const missionsForDay = dayIsHaid
+                                    ? INITIAL_MISSIONS.filter(m => !HAID_BLOCKED_MISSIONS.includes(m.id))
+                                    : INITIAL_MISSIONS
+                                const completedMissions = dayData ? missionsForDay.filter(m => {
+                                    const val = dayData[m.id]
+                                    return m.id === 'puasa' ? val?.status === true : val === true
+                                }).length : 0
+                                const totalForDay = missionsForDay.length
+                                const isComplete = completedMissions > 0 && completedMissions === totalForDay
+                                const hasProgress = completedMissions > 0 && !isComplete
+
+                                return (
+                                    <button
+                                        key={day}
+                                        onClick={() => {
+                                            const newDate = new Date(selectedDate)
+                                            newDate.setDate(selectedDate.getDate() + dayDiff)
+                                            setSelectedDate(newDate)
+                                            setShowCalendar(false)
+                                        }}
+                                        disabled={isFuture}
+                                        className={`relative flex flex-col items-center justify-center py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold transition-all
+                                            ${isSelected ? 'bg-primary text-background-dark shadow-lg shadow-primary/30 scale-105' : ''}
+                                            ${isToday && !isSelected ? 'bg-white/15 text-white ring-1 ring-primary/50' : ''}
+                                            ${!isSelected && !isToday && !isFuture ? 'bg-white/5 text-white/80 hover:bg-white/15' : ''}
+                                            ${isFuture ? 'bg-white/[0.02] text-white/20 cursor-not-allowed' : ''}
+                                        `}
+                                    >
+                                        <span>{day}</span>
+                                        <div className="flex items-center gap-0.5 h-1 mt-0.5">
+                                            {dayIsHaid && <span className="block w-1.5 h-1.5 rounded-full bg-rose-400 mx-auto"></span>}
+                                            {isComplete && <span className="block w-1.5 h-1.5 rounded-full bg-emerald-400 mx-auto"></span>}
+                                            {hasProgress && !isComplete && <span className="block w-1.5 h-1.5 rounded-full bg-yellow-400 mx-auto"></span>}
+                                        </div>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                        <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 text-[9px] md:text-[10px] text-white/40 flex-wrap">
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Selesai</span>
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400"></span> Sebagian</span>
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Haid</span>
+                            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-white/20"></span> Belum</span>
+                        </div>
+                    </div>
+                )}
                 <p className="mb-3 md:mb-6 max-w-md text-slate-300 text-xs md:text-base leading-relaxed hidden md:block">
                     "Semoga bulan suci ini membawa kedamaian, kebahagiaan, dan pertumbuhan spiritual dalam hidupmu."
                 </p>
@@ -732,11 +943,30 @@ export default function RamadhanTracker() {
           </div>
         )}
         <div className={`${isRamadhan !== true ? 'opacity-30 pointer-events-none' : ''}`}>
+        {/* Haid Mode Banner */}
+        {dayHaidActive && (
+          <div className="mb-4 bg-gradient-to-r from-rose-500/10 to-pink-500/10 border border-rose-500/20 rounded-xl p-3 md:p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xl md:text-2xl">🌸</span>
+              <div>
+                <p className="text-sm md:text-base font-bold text-rose-400">Mode Haid Aktif</p>
+                <p className="text-[10px] md:text-xs text-rose-300/70">Hanya menampilkan misi yang bisa dilakukan saat haid</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setHaidMode(false)}
+              className="text-[10px] md:text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 px-2 md:px-3 py-1 md:py-1.5 rounded-lg transition-colors border border-rose-500/20"
+            >
+              Matikan
+            </button>
+          </div>
+        )}
         <div className="flex items-center justify-between mb-3 md:mb-6">
           <h3 className="text-lg md:text-2xl font-bold tracking-tight text-white">Misi Harian</h3>
+          {dayHaidActive && <span className="text-[10px] md:text-xs text-rose-400 font-medium">{activeMissions.length} misi tersedia</span>}
         </div>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-          {INITIAL_MISSIONS.map((mission) => {
+          {activeMissions.map((mission) => {
             const isPuasa = mission.id === 'puasa'
             const current = currentData[mission.id]
             const isDone = isPuasa ? current?.status : !!current

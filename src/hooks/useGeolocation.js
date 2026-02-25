@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { resolveIndonesiaLocation } from '../data/indonesiaLocations'
 
 export function useGeolocation() {
   const [position, setPosition] = useState(null)
@@ -31,9 +32,18 @@ export function useGeolocation() {
           const parts = [kelurahan, kecamatan, kota].filter(Boolean)
           const cityStr = parts.length > 0 ? parts.join(', ') : 'Lokasi Terdeteksi'
 
-          setPosition({ lat: latitude, lng: longitude, city: cityStr })
+          // Resolve to equran.id provinsi/kabkota format
+          const idLocation = await resolveIndonesiaLocation(addr)
+
+          setPosition({
+            lat: latitude,
+            lng: longitude,
+            city: cityStr,
+            provinsi: idLocation?.provinsi || null,
+            kabkota: idLocation?.kabkota || null,
+          })
         } catch {
-          setPosition({ lat: latitude, lng: longitude, city: 'Lokasi Terdeteksi' })
+          setPosition({ lat: latitude, lng: longitude, city: 'Lokasi Terdeteksi', provinsi: null, kabkota: null })
         }
         setLoading(false)
       },

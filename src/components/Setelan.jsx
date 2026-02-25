@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { requestNotificationPermission } from '../utils/notifications'
+import { resolveIndonesiaLocation } from '../data/indonesiaLocations'
 import Changelog from './Changelog'
 
 export default function Setelan() {
@@ -11,6 +12,8 @@ export default function Setelan() {
     favorites, addFavorite, removeFavorite,
     notificationsEnabled, setNotificationsEnabled,
     imsakNotifEnabled, setImsakNotifEnabled,
+    haidMode, setHaidMode,
+    ramadhanStartDate, setRamadhanStartDate,
   } = useApp()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -24,14 +27,29 @@ export default function Setelan() {
     setSearching(true)
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQuery)}&format=json&limit=5&accept-language=id`
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQuery)}&format=json&limit=5&accept-language=id&addressdetails=1&countrycodes=`
       )
       const data = await res.json()
-      setSearchResults(data.map(r => ({
-        lat: parseFloat(r.lat),
-        lng: parseFloat(r.lon),
-        city: r.display_name.split(',').slice(0, 3).join(',').trim(),
-      })))
+      const results = []
+      for (const r of data) {
+        const loc = {
+          lat: parseFloat(r.lat),
+          lng: parseFloat(r.lon),
+          city: r.display_name.split(',').slice(0, 3).join(',').trim(),
+          provinsi: null,
+          kabkota: null,
+        }
+        // Resolve Indonesia location for equran.id API
+        if (r.address) {
+          const idLoc = await resolveIndonesiaLocation(r.address)
+          if (idLoc) {
+            loc.provinsi = idLoc.provinsi
+            loc.kabkota = idLoc.kabkota
+          }
+        }
+        results.push(loc)
+      }
+      setSearchResults(results)
     } catch {
       setSearchResults([])
     }
@@ -135,6 +153,107 @@ export default function Setelan() {
             >
               <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${imsakNotifEnabled ? 'translate-x-6' : ''}`}></div>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mode Haid */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Mode Khusus</h3>
+        <div className="bg-white dark:bg-white/5 rounded-xl border border-rose-200 dark:border-rose-500/20 overflow-hidden">
+          <div className="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-500/10 dark:to-pink-500/10 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-500/20 flex items-center justify-center">
+                  <span className="text-lg">🌸</span>
+                </div>
+                <div>
+                  <span className="text-slate-800 dark:text-white font-medium block">Mode Haid</span>
+                  <p className="text-xs text-rose-500 dark:text-rose-400 mt-0.5">Untuk menjaga streak saat berhalangan</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setHaidMode(!haidMode)}
+                className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${haidMode ? 'bg-rose-500' : 'bg-slate-300 dark:bg-slate-600'}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${haidMode ? 'translate-x-6' : ''}`}></div>
+              </button>
+            </div>
+          </div>
+          {haidMode && (
+            <div className="p-4 border-t border-rose-100 dark:border-rose-500/10 animate-fade-in">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Misi sholat & puasa disembunyikan. Misi yang tersedia:</p>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+                  <span className="material-icons text-xs">spa</span> Dzikir Pagi
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+                  <span className="material-icons text-xs">psychology</span> Dzikir Petang
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+                  <span className="material-icons text-xs">volunteer_activism</span> Sedekah
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Ramadhan Settings */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Ramadhan</h3>
+        <div className="bg-white dark:bg-white/5 rounded-xl border border-emerald-200 dark:border-emerald-500/20 overflow-hidden">
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-500/10 dark:to-teal-500/10 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+                <span className="text-lg">🌙</span>
+              </div>
+              <div>
+                <span className="text-slate-800 dark:text-white font-medium block">Awal Ramadhan {new Date().getFullYear() - 579} H</span>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">Sesuaikan dengan penetapan organisasi Anda</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setRamadhanStartDate(null)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                  !ramadhanStartDate
+                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20'
+                    : 'bg-white/80 dark:bg-white/10 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-emerald-300'
+                }`}
+              >
+                <span className="flex items-center gap-1">
+                  <span className="material-icons text-xs">auto_awesome</span>
+                  Auto (API)
+                </span>
+              </button>
+            </div>
+          </div>
+          {/* Custom date input */}
+          <div className="p-4 border-t border-emerald-100 dark:border-emerald-500/10">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-2">Atau pilih tanggal kustom:</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={ramadhanStartDate || ''}
+                onChange={(e) => setRamadhanStartDate(e.target.value || null)}
+                className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-white/10 border border-slate-200 dark:border-white/10 rounded-lg text-slate-800 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              />
+              {ramadhanStartDate && (
+                <button
+                  onClick={() => setRamadhanStartDate(null)}
+                  className="px-2 py-1.5 text-xs text-red-400 hover:text-red-500 font-medium"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+            <p className="text-[10px] text-slate-400 mt-2">
+              {ramadhanStartDate
+                ? `✅ Ramadhan dimulai: ${new Date(ramadhanStartDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`
+                : '🔄 Menggunakan deteksi otomatis dari API'
+              }
+            </p>
           </div>
         </div>
       </div>
@@ -254,7 +373,7 @@ export default function Setelan() {
                 <span className="material-icons">info</span>
               </div>
               <div>
-                <span className="text-slate-800 dark:text-white font-medium block">Versi 1.3.0</span>
+                <span className="text-slate-800 dark:text-white font-medium block">Versi 1.4.0</span>
                 <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">Lihat apa yang baru</span>
               </div>
             </div>
@@ -265,8 +384,8 @@ export default function Setelan() {
       
       {/* Footer text */}
       <div className="text-center text-xs text-slate-400 space-y-1 pb-4">
-        <p>SholatKu v1.3.0 — Jadwal Sholat by Ajekkk</p>
-        <p>Data dari <a href="https://aladhan.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Aladhan API</a></p>
+        <p>SholatKu v1.4.0 — Jadwal Sholat by Ajekkk</p>
+        <p>Data dari <a href="https://equran.id" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">EQuran.id</a> (Kemenag RI)</p>
       </div>
 
       {/* Modal Changelog Popup */}

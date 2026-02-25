@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import { useCountdown } from '../hooks/useCountdown'
+import { fetchEquranSchedule } from '../data/indonesiaLocations'
 
 const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
 const BULAN = [
@@ -19,52 +20,78 @@ export default function Jadwal() {
   const [monthlyData, setMonthlyData] = useState([])
   const [loadingMonthly, setLoadingMonthly] = useState(false)
 
-  // Fetch data bulanan dari Aladhan Calendar API
+  // Fetch data bulanan — equran.id (Kemenag) primary, aladhan.com fallback
   useEffect(() => {
     if (!location.lat || !location.lng) return
     const fetchMonthly = async () => {
       setLoadingMonthly(true)
       try {
-        const res = await fetch(
-          `https://api.aladhan.com/v1/calendar/${year}/${month + 1}?latitude=${location.lat}&longitude=${location.lng}&method=20`
-        )
-        const json = await res.json()
-        if (json.code === 200 && json.data) {
-          const parsed = json.data.map((day) => {
-            const t = day.timings
-            const clean = (s) => s.replace(/\s*\(.*\)/, '')
-            const d = new Date(day.date.readable)
-            return {
-              tgl: day.date.gregorian.day,
-              hari: HARI[new Date(`${year}-${String(month + 1).padStart(2, '0')}-${day.date.gregorian.day}`).getDay()] || HARI[d.getDay()],
-              hijri: day.date.hijri,
-              Imsak: clean(t.Imsak),
-              Subuh: clean(t.Fajr),
-              Terbit: clean(t.Sunrise),
-              Dhuha: clean(t.Dhuhr).replace(/^(\d{2}):(\d{2})$/, (_, h, m) => {
-                // Dhuha sekitar 15 menit setelah Terbit
-                const terbitH = parseInt(clean(t.Sunrise).split(':')[0])
-                const terbitM = parseInt(clean(t.Sunrise).split(':')[1])
-                let dm = terbitM + 15
-                let dh = terbitH
-                if (dm >= 60) { dm -= 60; dh += 1 }
-                return `${String(dh).padStart(2, '0')}:${String(dm).padStart(2, '0')}`
-              }),
-              Dzuhur: clean(t.Dhuhr),
-              Ashar: clean(t.Asr),
-              Maghrib: clean(t.Maghrib),
-              Isya: clean(t.Isha),
-            }
-          })
-          setMonthlyData(parsed)
+        let parsed = null
+
+        // ─── PRIMARY: equran.id (Kemenag) for Indonesia ───
+        if (location.provinsi && location.kabkota) {
+          const jadwal = await fetchEquranSchedule(location.provinsi, location.kabkota, month + 1, year)
+          if (jadwal) {
+            parsed = jadwal.map((day) => ({
+              tgl: String(day.tanggal).padStart(2, '0'),
+              hari: day.hari || HARI[new Date(day.tanggal_lengkap).getDay()],
+              Imsak: day.imsak,
+              Subuh: day.subuh,
+              Terbit: day.terbit,
+              Dhuha: day.dhuha,
+              Dzuhur: day.dzuhur,
+              Ashar: day.ashar,
+              Maghrib: day.maghrib,
+              Isya: day.isya,
+            }))
+            console.log('[SholatKu] ✅ Monthly schedule from equran.id (Kemenag)')
+          }
         }
+
+        // ─── FALLBACK: aladhan.com ───
+        if (!parsed) {
+          const res = await fetch(
+            `https://api.aladhan.com/v1/calendar/${year}/${month + 1}?latitude=${location.lat}&longitude=${location.lng}&method=20`
+          )
+          const json = await res.json()
+          if (json.code === 200 && json.data) {
+            parsed = json.data.map((day) => {
+              const t = day.timings
+              const clean = (s) => s.replace(/\s*\(.*\)/, '')
+              const d = new Date(day.date.readable)
+              return {
+                tgl: day.date.gregorian.day,
+                hari: HARI[new Date(`${year}-${String(month + 1).padStart(2, '0')}-${day.date.gregorian.day}`).getDay()] || HARI[d.getDay()],
+                hijri: day.date.hijri,
+                Imsak: clean(t.Imsak),
+                Subuh: clean(t.Fajr),
+                Terbit: clean(t.Sunrise),
+                Dhuha: clean(t.Dhuhr).replace(/^(\d{2}):(\d{2})$/, (_, h, m) => {
+                  const terbitH = parseInt(clean(t.Sunrise).split(':')[0])
+                  const terbitM = parseInt(clean(t.Sunrise).split(':')[1])
+                  let dm = terbitM + 15
+                  let dh = terbitH
+                  if (dm >= 60) { dm -= 60; dh += 1 }
+                  return `${String(dh).padStart(2, '0')}:${String(dm).padStart(2, '0')}`
+                }),
+                Dzuhur: clean(t.Dhuhr),
+                Ashar: clean(t.Asr),
+                Maghrib: clean(t.Maghrib),
+                Isya: clean(t.Isha),
+              }
+            })
+            console.log('[SholatKu] ⚠️ Monthly schedule from aladhan.com (fallback)')
+          }
+        }
+
+        if (parsed) setMonthlyData(parsed)
       } catch (err) {
         console.error('Gagal mengambil jadwal bulanan:', err)
       }
       setLoadingMonthly(false)
     }
     fetchMonthly()
-  }, [location.lat, location.lng, month, year])
+  }, [location.lat, location.lng, location.provinsi, location.kabkota, month, year])
 
   const isCurrentMonth = month === today.getMonth() && year === today.getFullYear()
   const todayDate = today.getDate()
