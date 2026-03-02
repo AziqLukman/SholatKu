@@ -53,6 +53,12 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : null
   })
 
+  // Hafalan Data
+  const [hafalanData, setHafalanData] = useState(() => {
+    const saved = localStorage.getItem('sholatku-hafalan')
+    return saved ? JSON.parse(saved) : {}
+  })
+
   // Persist dark mode
   useEffect(() => {
     localStorage.setItem('sholatku-darkmode', JSON.stringify(darkMode))
@@ -93,6 +99,30 @@ export function AppProvider({ children }) {
     localStorage.setItem('sholatku-ramadhan-start', JSON.stringify(ramadhanStartDate))
   }, [ramadhanStartDate])
 
+  // Persist hafalan data
+  useEffect(() => {
+    localStorage.setItem('sholatku-hafalan', JSON.stringify(hafalanData))
+  }, [hafalanData])
+
+  const toggleHafalan = (nomorSurat, nomorAyat) => {
+    setHafalanData(prev => {
+      const suratHafalan = prev[nomorSurat] || []
+      const isHafal = suratHafalan.includes(nomorAyat)
+      
+      let newSuratHafalan
+      if (isHafal) {
+        newSuratHafalan = suratHafalan.filter(a => a !== nomorAyat)
+      } else {
+        newSuratHafalan = [...suratHafalan, nomorAyat]
+      }
+      
+      return {
+        ...prev,
+        [nomorSurat]: newSuratHafalan
+      }
+    })
+  }
+
   const toggleDarkMode = () => setDarkMode(prev => !prev)
 
   const addFavorite = (loc) => {
@@ -118,6 +148,7 @@ export function AppProvider({ children }) {
     imsakNotifEnabled, setImsakNotifEnabled,
     haidMode, setHaidMode,
     ramadhanStartDate, setRamadhanStartDate,
+    hafalanData, toggleHafalan,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

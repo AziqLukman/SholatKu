@@ -12,21 +12,7 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-23T13:58:55.130Z"
-  },
-  {
-    "subscription": {
-      "endpoint": "https://web.push.apple.com/QPAgQYT9xoj1HJoLuU3oKDihhG40w5xNJQ6ddMgYqTt0frkolOqJBjkn4F24JUelKaXVmVAfnx4VlY6wUszR6g0OITBeqZ7SJ-lCO0nUhzR1wImOEDSIp5BEii9TzkBvateFEER-7KgpRHSy0AwU4SBDplh42rE_t_2wkoktJ5M",
-      "keys": {
-        "p256dh": "BH2CI9lOQtG7OTEVlyINkmHmGdiVd64fB43HFrFMWjmZd6xyp2XDJrW54YH56fgbcHbmKywAvIHoaO4PbEhKOvA",
-        "auth": "AXSfRxzQzUNwkI_5oXuMBg"
-      }
-    },
-    "lat": -7.2352717061385885,
-    "lng": 112.61247938567743,
-    "notificationsEnabled": true,
-    "imsakNotifEnabled": true,
-    "createdAt": "2026-02-14T05:28:47.128Z"
+    "createdAt": "2026-03-01T00:32:10.285Z"
   },
   {
     "subscription": {
@@ -36,11 +22,11 @@
         "auth": "oSnlL1V15mtTJiBr68EvAw"
       }
     },
-    "lat": -7.235233078110438,
-    "lng": 112.61247716664504,
+    "lat": -7.235240296507681,
+    "lng": 112.61248623049354,
     "notificationsEnabled": true,
-    "imsakNotifEnabled": true,
-    "createdAt": "2026-02-23T10:53:33.923Z"
+    "imsakNotifEnabled": false,
+    "createdAt": "2026-02-27T12:06:48.628Z"
   },
   {
     "subscription": {
@@ -51,11 +37,11 @@
         "auth": "lBPn47qC-rxLd4LvliYegw"
       }
     },
-    "lat": -7.3100504,
-    "lng": 112.7499024,
+    "lat": -7.3100572,
+    "lng": 112.7499014,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-19T10:14:22.343Z"
+    "createdAt": "2026-03-01T09:33:39.150Z"
   },
   {
     "subscription": {
@@ -70,6 +56,6 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-25T02:08:37.186Z"
+    "createdAt": "2026-03-02T00:55:14.150Z"
   }
 ]

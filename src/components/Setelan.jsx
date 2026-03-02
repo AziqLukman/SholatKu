@@ -373,7 +373,7 @@ export default function Setelan() {
                 <span className="material-icons">info</span>
               </div>
               <div>
-                <span className="text-slate-800 dark:text-white font-medium block">Versi 1.5.0</span>
+                <span className="text-slate-800 dark:text-white font-medium block">Versi 1.6.0</span>
                 <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">Lihat apa yang baru</span>
               </div>
             </div>
@@ -384,7 +384,7 @@ export default function Setelan() {
       
       {/* Footer text */}
       <div className="text-center text-xs text-slate-400 space-y-1 pb-4">
-        <p>SholatKu v1.5.0 — Jadwal Sholat by Ajekkk</p>
+        <p>SholatKu v1.6.0 — Jadwal Sholat by Ajekkk</p>
         <p>Data dari <a href="https://equran.id" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">EQuran.id</a> (Kemenag RI)</p>
       </div>
 

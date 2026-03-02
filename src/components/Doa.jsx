@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import { useApp } from '../context/AppContext'
 
 const QARI_LIST = [
   { id: '01', nama: 'Abdullah Al-Juhany' },
@@ -9,7 +10,154 @@ const QARI_LIST = [
   { id: '06', nama: 'Yasser Al-Dosari' },
 ]
 
+const AyatItem = React.memo(({ 
+  ayat, 
+  isHafal, 
+  modeHafalan, 
+  revealedWords, 
+  isPlaying, 
+  isLooping, 
+  onToggleHafalan, 
+  onToggleLoop, 
+  onPlay, 
+  onToggleWordReveal,
+  onRevealAllWords,
+  onHideAllWords
+}) => {
+  const words = useMemo(() => ayat.teksArab.split(' '), [ayat.teksArab])
+  const isFullyRevealed = revealedWords.length === words.length && revealedWords.every(Boolean)
+
+  return (
+    <div
+      className={`bg-white dark:bg-white/5 rounded-xl border transition-all overflow-hidden ${
+        isPlaying
+          ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/5'
+          : isHafal
+            ? 'border-emerald-200 dark:border-emerald-500/30'
+            : 'border-slate-200 dark:border-white/10'
+      }`}
+    >
+      {/* Header Ayat & Action */}
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5 gap-3 ${isHafal ? 'bg-emerald-50/50 dark:bg-emerald-500/5' : 'bg-slate-50/50 dark:bg-white/5'}`}>
+        <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shrink-0 ${
+            isHafal ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'bg-primary/10 text-primary'
+          }`}>
+            <span className="text-xs font-bold">{ayat.nomorAyat}</span>
+          </div>
+          <button 
+            onClick={() => onToggleHafalan(ayat.nomorAyat)}
+            className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all border flex items-center gap-1.5 shrink-0 ${
+              isHafal 
+                ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30' 
+                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 dark:bg-transparent dark:text-slate-400 dark:border-white/10 dark:hover:bg-white/5'
+            }`}
+          >
+            <span className="material-icons text-[14px]">{isHafal ? 'check_circle' : 'radio_button_unchecked'}</span>
+            {isHafal ? 'Telah Dihafal' : 'Tandai Hafal'}
+          </button>
+        </div>
+        
+        <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap sm:flex-nowrap justify-end">
+          {modeHafalan && (
+            <button
+              onClick={() => {
+                if (isFullyRevealed) {
+                  onHideAllWords(ayat.nomorAyat)
+                } else {
+                  onRevealAllWords(ayat.nomorAyat, words.length)
+                }
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                isFullyRevealed
+                  ? 'bg-slate-200 text-slate-600 dark:bg-white/20 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-white/30'
+                  : 'bg-primary/10 text-primary hover:bg-primary/20'
+              }`}
+            >
+              <span className="material-icons text-sm">
+                {isFullyRevealed ? 'visibility_off' : 'visibility'}
+              </span>
+              <span className="hidden sm:inline">
+                {isFullyRevealed ? 'Tutup Ayat' : 'Lihat Penuh'}
+              </span>
+            </button>
+          )}
+          <button
+            onClick={() => onToggleLoop(ayat.nomorAyat)}
+            className={`p-1.5 rounded-full transition-all border ${
+              isLooping
+                ? 'bg-amber-100/50 text-amber-600 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30 shadow-sm'
+                : 'bg-white text-slate-400 border-slate-200 hover:text-slate-600 hover:bg-slate-50 dark:bg-transparent dark:border-white/10 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-white/5'
+            }`}
+            title="Ulangi Audio (Loop)"
+          >
+            <span className="material-icons text-[16px]">repeat</span>
+          </button>
+          <button
+            onClick={() => onPlay(ayat)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              isPlaying
+                ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                : 'bg-primary/10 text-primary hover:bg-primary/20'
+            }`}
+          >
+            <span className="material-icons text-sm">
+              {isPlaying ? 'stop' : 'volume_up'}
+            </span>
+            {isPlaying ? 'Berhenti' : 'Dengarkan'}
+          </button>
+        </div>
+      </div>
+
+      {/* Teks Arab */}
+      <div 
+        className={`px-4 py-6 relative outline-none transition-colors ${isHafal ? 'bg-emerald-50/20 dark:bg-emerald-500/5' : ''}`}
+      >
+        <p className="text-right text-3xl leading-[2.5] font-serif text-slate-800 dark:text-white" dir="rtl" lang="ar">
+          {words.map((word, wIdx) => {
+            const isWordRevealed = revealedWords[wIdx];
+            const isWordBlur = modeHafalan && !isWordRevealed;
+            
+            return (
+              <React.Fragment key={wIdx}>
+                <span 
+                  onClick={() => modeHafalan && onToggleWordReveal(ayat.nomorAyat, wIdx)}
+                  className={`transition-all duration-300 inline-block px-1 rounded-md ${
+                    isWordBlur 
+                      ? 'blur-[6px] opacity-40 hover:opacity-70 cursor-pointer bg-slate-200/50 dark:bg-white/10' 
+                      : modeHafalan && isWordRevealed
+                        ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5'
+                        : ''
+                  }`}
+                >
+                  {word}
+                </span>
+                {' '}
+              </React.Fragment>
+            );
+          })}
+        </p>
+      </div>
+
+      {/* Latin + Terjemah */}
+      {(!modeHafalan) && (
+        <div className={`px-4 pb-5 space-y-3 animate-fade-in border-t border-slate-100/50 dark:border-white/5 pt-4 ${isHafal ? 'bg-emerald-50/20 dark:bg-emerald-500/5' : ''}`}>
+          <div>
+            <p className="text-[11px] text-primary/70 dark:text-primary/90 font-semibold uppercase tracking-wider mb-1">Transliterasi</p>
+            <p className="text-sm text-primary italic leading-relaxed">{ayat.teksLatin}</p>
+          </div>
+          <div>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider mb-1">Terjemahan</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{ayat.teksIndonesia}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+});
+
 export default function Doa() {
+  const { hafalanData, toggleHafalan } = useApp()
   const [tab, setTab] = useState('doa') // 'doa' | 'quran'
   const [doaList, setDoaList] = useState([])
   const [loadingDoa, setLoadingDoa] = useState(true)
@@ -28,6 +176,45 @@ export default function Doa() {
   const [playingFull, setPlayingFull] = useState(false)
   const audioRef = useRef(null)
   const fullAudioRef = useRef(null)
+
+  // Hafalan states
+  const [modeHafalan, setModeHafalan] = useState(false)
+  const [loopState, setLoopState] = useState({}) // { [nomorAyat]: boolean }
+  const [revealedWords, setRevealedWords] = useState({}) // { [nomorAyat]: boolean[] }
+  
+  const toggleLoop = (nomorAyat) => {
+    setLoopState(prev => {
+      const next = { ...prev, [nomorAyat]: !prev[nomorAyat] }
+      // Update running audio if playing
+      if (playingAyat === nomorAyat && audioRef.current) {
+        audioRef.current.loop = next[nomorAyat]
+      }
+      return next
+    })
+  }
+
+  const toggleWordReveal = (nomorAyat, wordIndex) => {
+    setRevealedWords(prev => {
+      const ayatRevealed = prev[nomorAyat] || []
+      const newRevealed = [...ayatRevealed]
+      newRevealed[wordIndex] = !newRevealed[wordIndex]
+      return { ...prev, [nomorAyat]: newRevealed }
+    })
+  }
+
+  const revealAllWords = (nomorAyat, totalWords) => {
+    setRevealedWords(prev => ({
+      ...prev,
+      [nomorAyat]: Array(totalWords).fill(true)
+    }))
+  }
+
+  const hideAllWords = (nomorAyat) => {
+    setRevealedWords(prev => ({
+      ...prev,
+      [nomorAyat]: []
+    }))
+  }
 
   // ─── Fetch Doa ───
   useEffect(() => {
@@ -114,6 +301,7 @@ export default function Doa() {
     const url = ayat.audio[selectedQari]
     if (!url) return
     audioRef.current = new Audio(url)
+    audioRef.current.loop = !!loopState[ayat.nomorAyat]
     audioRef.current.play()
     setPlayingAyat(ayat.nomorAyat)
     audioRef.current.onended = () => setPlayingAyat(null)
@@ -336,6 +524,16 @@ export default function Doa() {
                             <span className="text-base font-serif text-primary/70 ml-2">{s.nama}</span>
                           </div>
                           <p className="text-[11px] text-slate-400 truncate">{s.arti} • {s.jumlahAyat} ayat • {s.tempatTurun}</p>
+                          {/* Progress Hafalan */}
+                          {hafalanData[s.nomor] && hafalanData[s.nomor].length > 0 && (
+                            <div className="mt-1.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              <span className="material-icons text-[12px]">check_circle</span>
+                              Dihafal: {hafalanData[s.nomor].length} / {s.jumlahAyat}
+                              <div className="flex-1 ml-1.5 h-1 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
+                                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(hafalanData[s.nomor].length / s.jumlahAyat) * 100}%` }}></div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </button>
@@ -349,7 +547,7 @@ export default function Doa() {
               {/* Back Button + Header */}
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setSelectedSurat(null); setSuratData(null); stopFullAudio(); audioRef.current?.pause(); setPlayingAyat(null) }}
+                  onClick={() => { setSelectedSurat(null); setSuratData(null); stopFullAudio(); audioRef.current?.pause(); setPlayingAyat(null); setModeHafalan(false); setLoopState({}); setRevealedWords({}) }}
                   className="p-2 rounded-lg bg-white dark:bg-white/10 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/20 transition-colors"
                 >
                   <span className="material-icons text-slate-600 dark:text-slate-300">arrow_back</span>
@@ -372,9 +570,9 @@ export default function Doa() {
                 </div>
               ) : suratData && (
                 <>
-                  {/* Full Audio Player */}
-                  <div className="bg-white dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  {/* Action Bar Surah */}
+                  <div className="bg-white dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
                       <button
                         onClick={toggleFullAudio}
                         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
@@ -396,55 +594,50 @@ export default function Doa() {
                         </p>
                       </div>
                     </div>
+
+                    {/* Mode Hafalan Toggle (Ayat Text Buram) */}
+                    <div className="w-full sm:w-auto flex items-center justify-between gap-3 bg-slate-50 dark:bg-white/5 px-4 py-2 rounded-lg border border-slate-100 dark:border-white/5">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-800 dark:text-white">Mode Hafalan</span>
+                        <span className="text-[10px] text-slate-500">Tutup teks ayat</span>
+                      </div>
+                      <button
+                        onClick={() => setModeHafalan(prev => !prev)}
+                        className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${
+                          modeHafalan ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'
+                        }`}
+                      >
+                        <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                          modeHafalan ? 'translate-x-6' : 'translate-x-0'
+                        }`} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Ayat-ayat */}
                   <div className="space-y-3">
-                    {suratData.ayat.map((ayat) => (
-                      <div
-                        key={ayat.nomorAyat}
-                        className={`bg-white dark:bg-white/5 rounded-xl border transition-all ${
-                          playingAyat === ayat.nomorAyat
-                            ? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/5'
-                            : 'border-slate-200 dark:border-white/10'
-                        }`}
-                      >
-                        {/* Nomor Ayat + Audio */}
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/5">
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                              <span className="text-xs font-bold text-primary">{ayat.nomorAyat}</span>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => playAyat(ayat)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                              playingAyat === ayat.nomorAyat
-                                ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                                : 'bg-primary/10 text-primary hover:bg-primary/20'
-                            }`}
-                          >
-                            <span className="material-icons text-sm">
-                              {playingAyat === ayat.nomorAyat ? 'stop' : 'volume_up'}
-                            </span>
-                            {playingAyat === ayat.nomorAyat ? 'Berhenti' : 'Dengarkan'}
-                          </button>
-                        </div>
+                    {suratData.ayat.map((ayat) => {
+                      const isHafal = hafalanData[suratData.nomor]?.includes(ayat.nomorAyat)
+                      const currentRevealedWords = revealedWords[ayat.nomorAyat] || []
 
-                        {/* Teks Arab */}
-                        <div className="px-4 py-4">
-                          <p className="text-right text-2xl leading-[2.5] font-serif text-slate-800 dark:text-white" dir="rtl" lang="ar">
-                            {ayat.teksArab}
-                          </p>
-                        </div>
-
-                        {/* Latin + Terjemah */}
-                        <div className="px-4 pb-4 space-y-2">
-                          <p className="text-sm text-primary italic leading-relaxed">{ayat.teksLatin}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{ayat.teksIndonesia}</p>
-                        </div>
-                      </div>
-                    ))}
+                      return (
+                        <AyatItem 
+                          key={ayat.nomorAyat}
+                          ayat={ayat}
+                          isHafal={isHafal}
+                          modeHafalan={modeHafalan}
+                          revealedWords={currentRevealedWords}
+                          isPlaying={playingAyat === ayat.nomorAyat}
+                          isLooping={!!loopState[ayat.nomorAyat]}
+                          onToggleHafalan={(nomorAyat) => toggleHafalan(suratData.nomor, nomorAyat)}
+                          onToggleLoop={toggleLoop}
+                          onPlay={playAyat}
+                          onToggleWordReveal={toggleWordReveal}
+                          onRevealAllWords={revealAllWords}
+                          onHideAllWords={hideAllWords}
+                        />
+                      )
+                    })}
                   </div>
                 </>
               )}
