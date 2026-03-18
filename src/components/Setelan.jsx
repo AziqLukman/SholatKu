@@ -384,7 +384,7 @@ export default function Setelan() {
       
       {/* Footer text */}
       <div className="text-center text-xs text-slate-400 space-y-1 pb-4">
-        <p>SholatKu v1.6.0 — Jadwal Sholat by Ajekkk</p>
+        <p>SholatKu v1.7.0 — Jadwal Sholat by Ajekkk</p>
         <p>Data dari <a href="https://equran.id" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">EQuran.id</a> (Kemenag RI)</p>
       </div>
 
