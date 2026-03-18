@@ -1,9 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { useAuth } from './AuthContext'
+import { database } from '../utils/firebase'
+import { ref, get, set } from 'firebase/database'
 
 const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
-  // Dark mode — persisted
+  const { user } = useAuth()
+
+  // Dark mode
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('sholatku-darkmode')
     return saved !== null ? JSON.parse(saved) : true
@@ -29,25 +34,25 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : []
   })
 
-  // Notifications enabled
+  // Notifications
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
     const saved = localStorage.getItem('sholatku-notifications')
     return saved ? JSON.parse(saved) : false
   })
 
-  // Imsak & Sahur notifications
+  // Imsak & Sahur
   const [imsakNotifEnabled, setImsakNotifEnabled] = useState(() => {
     const saved = localStorage.getItem('sholatku-imsak-notif')
     return saved ? JSON.parse(saved) : false
   })
 
-  // Haid Mode (menstruation mode for women)
+  // Haid Mode
   const [haidMode, setHaidMode] = useState(() => {
     const saved = localStorage.getItem('sholatku-haid-mode')
     return saved ? JSON.parse(saved) : false
   })
 
-  // Ramadhan start date override (format: 'YYYY-MM-DD' or null for auto)
+  // Ramadhan start date
   const [ramadhanStartDate, setRamadhanStartDate] = useState(() => {
     const saved = localStorage.getItem('sholatku-ramadhan-start')
     return saved ? JSON.parse(saved) : null
@@ -59,9 +64,42 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : {}
   })
 
-  // Persist dark mode
+  // Load cloud data when user logs in
   useEffect(() => {
-    localStorage.setItem('sholatku-darkmode', JSON.stringify(darkMode))
+    if (user) {
+      const loadCloudData = async () => {
+        try {
+          const snap = await get(ref(database, `users/${user.uid}`))
+          if (snap.exists()) {
+            const data = snap.val()
+            if (data['sholatku-darkmode'] !== undefined) setDarkMode(data['sholatku-darkmode'])
+            if (data['sholatku-location']) setLocation(data['sholatku-location'])
+            if (data['sholatku-favorites']) setFavorites(data['sholatku-favorites'])
+            if (data['sholatku-notifications'] !== undefined) setNotificationsEnabled(data['sholatku-notifications'])
+            if (data['sholatku-imsak-notif'] !== undefined) setImsakNotifEnabled(data['sholatku-imsak-notif'])
+            if (data['sholatku-haid-mode'] !== undefined) setHaidMode(data['sholatku-haid-mode'])
+            if (data['sholatku-ramadhan-start'] !== undefined) setRamadhanStartDate(data['sholatku-ramadhan-start'])
+            if (data['sholatku-hafalan']) setHafalanData(data['sholatku-hafalan'])
+          }
+        } catch (e) {
+          console.error("Failed to load cloud data", e)
+        }
+      }
+      loadCloudData()
+    }
+  }, [user])
+
+  // Helper function for dual-write
+  const saveState = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value))
+    if (user) {
+      set(ref(database, `users/${user.uid}/${key}`), value).catch(console.error)
+    }
+  }
+
+  // Dual-write Effects
+  useEffect(() => {
+    saveState('sholatku-darkmode', darkMode)
     if (darkMode) {
       document.documentElement.classList.add('dark')
     } else {
@@ -69,40 +107,13 @@ export function AppProvider({ children }) {
     }
   }, [darkMode])
 
-  // Persist location
-  useEffect(() => {
-    localStorage.setItem('sholatku-location', JSON.stringify(location))
-  }, [location])
-
-  // Persist favorites
-  useEffect(() => {
-    localStorage.setItem('sholatku-favorites', JSON.stringify(favorites))
-  }, [favorites])
-
-  // Persist notifications
-  useEffect(() => {
-    localStorage.setItem('sholatku-notifications', JSON.stringify(notificationsEnabled))
-  }, [notificationsEnabled])
-
-  // Persist imsak notif
-  useEffect(() => {
-    localStorage.setItem('sholatku-imsak-notif', JSON.stringify(imsakNotifEnabled))
-  }, [imsakNotifEnabled])
-
-  // Persist haid mode
-  useEffect(() => {
-    localStorage.setItem('sholatku-haid-mode', JSON.stringify(haidMode))
-  }, [haidMode])
-
-  // Persist ramadhan start date
-  useEffect(() => {
-    localStorage.setItem('sholatku-ramadhan-start', JSON.stringify(ramadhanStartDate))
-  }, [ramadhanStartDate])
-
-  // Persist hafalan data
-  useEffect(() => {
-    localStorage.setItem('sholatku-hafalan', JSON.stringify(hafalanData))
-  }, [hafalanData])
+  useEffect(() => saveState('sholatku-location', location), [location])
+  useEffect(() => saveState('sholatku-favorites', favorites), [favorites])
+  useEffect(() => saveState('sholatku-notifications', notificationsEnabled), [notificationsEnabled])
+  useEffect(() => saveState('sholatku-imsak-notif', imsakNotifEnabled), [imsakNotifEnabled])
+  useEffect(() => saveState('sholatku-haid-mode', haidMode), [haidMode])
+  useEffect(() => saveState('sholatku-ramadhan-start', ramadhanStartDate), [ramadhanStartDate])
+  useEffect(() => saveState('sholatku-hafalan', hafalanData), [hafalanData])
 
   const toggleHafalan = (nomorSurat, nomorAyat) => {
     setHafalanData(prev => {
@@ -116,10 +127,7 @@ export function AppProvider({ children }) {
         newSuratHafalan = [...suratHafalan, nomorAyat]
       }
       
-      return {
-        ...prev,
-        [nomorSurat]: newSuratHafalan
-      }
+      return { ...prev, [nomorSurat]: newSuratHafalan }
     })
   }
 

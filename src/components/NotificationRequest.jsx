@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
+import { isNativePlatform } from '../utils/platform'
 
 export default function NotificationRequest() {
   const [show, setShow] = useState(false)
   const { notificationsEnabled, setNotificationsEnabled, setImsakNotifEnabled } = useApp()
 
   useEffect(() => {
+    // Di native app, notifikasi dihandle secara native
+    if (isNativePlatform()) return
     // Don't show if already enabled in app settings
     if (notificationsEnabled) return
     // Don't show if browser explicitly denied

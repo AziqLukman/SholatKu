@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
+import { AuthProvider } from './context/AuthContext'
 import { useGeolocation } from './hooks/useGeolocation'
 import { usePrayerTimes } from './hooks/usePrayerTimes'
 import { checkPrayerNotification, syncPrayerTimesToSW, subscribeToPush } from './utils/notifications'
@@ -15,6 +16,7 @@ import Tasbih from './components/Tasbih'
 import InstallPWA from './components/InstallPWA'
 import NotificationRequest from './components/NotificationRequest'
 import Changelog from './components/Changelog'
+import ProfileTab from './components/ProfileTab'
 
 function AppContent() {
 
@@ -112,6 +114,8 @@ function AppContent() {
         return <Doa />
       case 'settings':
         return <Setelan />
+      case 'profile':
+        return <ProfileTab />
       default:
         return null
     }
@@ -135,8 +139,15 @@ function AppContent() {
             </h1>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setActiveTab('profile')}
+                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white flex items-center justify-center"
+                aria-label="Buka Profil"
+              >
+                <span className="material-icons">account_circle</span>
+              </button>
+              <button
                 onClick={() => setActiveTab('settings')}
-                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white"
+                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white flex items-center justify-center"
                 aria-label="Buka Setelan"
               >
                 <span className="material-icons">settings</span>
@@ -175,8 +186,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </AuthProvider>
   )
 }

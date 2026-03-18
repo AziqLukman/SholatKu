@@ -4,9 +4,32 @@ import { useApp } from '../context/AppContext'
 
 const changelogData = [
   {
+    version: '1.7.0',
+    date: '18 Maret 2026',
+    isNew: true,
+    items: [
+      {
+        title: 'Sistem Akun & Sinkronisasi Cloud ☁️',
+        description: 'Kini SholatKu dilengkapi fitur Login menggunakan Email/Password atau akun Google. Seluruh progres ibadah, hafalan, dan pengaturan Anda kini aman dicadangkan (auto-sync) ke Firebase Realtime Database secara instan.'
+      },
+      {
+        title: 'Migrasi Data Cerdas 🔄',
+        description: 'Saat Anda login untuk pertama kalinya, semua progres offline yang sebelumnya ada di perangkat Anda tidak akan hilang. Sistem akan menyedotnya dan memindahkannya ke Cloud.'
+      },
+      {
+        title: 'Kustomisasi Profil 👤',
+        description: 'Tambahkan sentuhan persona Anda! Ubah nama sesuka hati dan pilih puluhan avatar Islami yang lucu langsung dari menu Edit Profil baru.'
+      },
+      {
+        title: 'Keamanan Berlapis 🔐',
+        description: 'Lupa password? Tidak masalah. Disediakan tombol "Lupa Password" super praktis yang akan mengirimkan tautan reset ke email Anda.'
+      }
+    ]
+  },
+  {
     version: '1.6.0',
     date: '2 Maret 2026',
-    isNew: true,
+    isNew: false,
     items: [
       {
         title: 'Fitur Hafalan Al-Qur\'an 📖',
@@ -223,11 +246,11 @@ export default function Changelog({ onClose }) {
             <img src="/icon.png" alt="Logo SholatKu" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">SholatKu</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.6.0</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.7.0</p>
           
           <div className="bg-slate-100 dark:bg-slate-700/50 px-4 py-2 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-2">
             <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <span>Update: 2 Maret 2026</span>
+            <span>Update: 18 Maret 2026</span>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { isNativePlatform } from '../utils/platform'
 
 export default function InstallPWA() {
   const [showPrompt, setShowPrompt] = useState(false)
@@ -6,6 +7,9 @@ export default function InstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState(null)
 
   useEffect(() => {
+    // Di native app (Capacitor), tidak perlu prompt install
+    if (isNativePlatform()) return
+
     // Already installed? Skip entirely
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
                          window.navigator.standalone ||

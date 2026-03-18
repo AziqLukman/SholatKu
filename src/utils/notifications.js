@@ -1,14 +1,59 @@
+import { isNativePlatform } from './platform'
+
 // Push Server URL — pakai domain publik agar bisa diakses dari HP
 const PUSH_SERVER_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3005'                      // dev lokal
   : 'https://push-sholatku.ajekkk.my.id'         // production (via Cloudflare Tunnel)
 
-export function requestNotificationPermission() {
+// Capacitor Local Notifications (lazy import untuk native)
+let LocalNotifications = null
+async function getLocalNotifications() {
+  if (!LocalNotifications && isNativePlatform()) {
+    try {
+      const mod = await import('@capacitor/local-notifications')
+      LocalNotifications = mod.LocalNotifications
+    } catch {
+      console.warn('[SholatKu] @capacitor/local-notifications not available')
+    }
+  }
+  return LocalNotifications
+}
+
+export async function requestNotificationPermission() {
+  if (isNativePlatform()) {
+    const LN = await getLocalNotifications()
+    if (LN) {
+      const result = await LN.requestPermissions()
+      return result.display
+    }
+    return 'denied'
+  }
   if (!('Notification' in window)) return Promise.resolve('denied')
   return Notification.requestPermission()
 }
 
-export function sendNotification(title, body) {
+let nativeNotifId = 1
+
+export async function sendNotification(title, body) {
+  if (isNativePlatform()) {
+    const LN = await getLocalNotifications()
+    if (LN) {
+      await LN.schedule({
+        notifications: [{
+          title,
+          body,
+          id: nativeNotifId++,
+          schedule: { at: new Date(Date.now() + 100) },
+          sound: 'default',
+          smallIcon: 'ic_launcher',
+        }]
+      })
+      console.log(`[SholatKu Notif] 🔔 Native notification: ${title}`)
+    }
+    return
+  }
+
+  // Web fallback
   if (Notification.permission === 'granted') {
     console.log(`[SholatKu Notif] 🔔 Mengirim notifikasi: ${title} — ${body}`)
     if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -43,6 +88,9 @@ export function sendNotification(title, body) {
 // ============================================
 export async function subscribeToPush(lat, lng, notificationsEnabled, imsakNotifEnabled) {
   try {
+    // Di native app, push subscription tidak diperlukan (pakai local notifications)
+    if (isNativePlatform()) return
+
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.log('[SholatKu Notif] Push API not supported')
       return

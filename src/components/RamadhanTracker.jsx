@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
+import { database } from '../utils/firebase'
+import { ref, get, set } from 'firebase/database'
 import { fetchEquranSchedule } from '../data/indonesiaLocations'
 
 const TRACKER_KEY = 'sholatku-ramadhan-tracker-v1'
@@ -69,6 +72,7 @@ const HAID_BLOCKED_MISSIONS = ['sahur', 'subuh', 'dhuhur', 'ashar', 'maghrib', '
 
 export default function RamadhanTracker() {
   const { setActiveTab, haidMode, setHaidMode, location, ramadhanStartDate } = useApp()
+  const { user } = useAuth()
   const [trackerData, setTrackerData] = useState({})
   const [expandedId, setExpandedId] = useState(null)
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -322,11 +326,23 @@ export default function RamadhanTracker() {
       setTrackerData(parsed)
       if (parsed._gamification) {
           setUserXP(parsed._gamification.xp || 0)
-          // Load saved streak (will be overridden by calculateStreak if still Ramadhan)
           setStreak(parsed._gamification.streak || 0)
       }
     }
-  }, [])
+    
+    if (user) {
+      get(ref(database, `users/${user.uid}/${TRACKER_KEY}`)).then(snap => {
+        if (snap.exists()) {
+          const parsed = snap.val()
+          setTrackerData(parsed)
+          if (parsed._gamification) {
+            setUserXP(parsed._gamification.xp || 0)
+            setStreak(parsed._gamification.streak || 0)
+          }
+        }
+      }).catch(console.error)
+    }
+  }, [user])
 
   // Recalculate streak when isRamadhan status is confirmed
   useEffect(() => {
@@ -404,6 +420,9 @@ export default function RamadhanTracker() {
     }
     setTrackerData(finalData)
     localStorage.setItem(TRACKER_KEY, JSON.stringify(finalData))
+    if (user) {
+        set(ref(database, `users/${user.uid}/${TRACKER_KEY}`), finalData).catch(console.error)
+    }
     
     // Update streak and check for celebration
     const oldStreak = streak

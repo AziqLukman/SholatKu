@@ -8,11 +8,11 @@
         "auth": "PxRpuR-YpBqUuC7pltgj5A"
       }
     },
-    "lat": -7.2344,
-    "lng": 112.6077,
+    "lat": -7.23522,
+    "lng": 112.612666,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-01T00:32:10.285Z"
+    "createdAt": "2026-03-14T09:18:48.107Z"
   },
   {
     "subscription": {
@@ -22,11 +22,11 @@
         "auth": "oSnlL1V15mtTJiBr68EvAw"
       }
     },
-    "lat": -7.235240296507681,
-    "lng": 112.61248623049354,
+    "lat": -7.3100894568263515,
+    "lng": 112.74984332423585,
     "notificationsEnabled": true,
-    "imsakNotifEnabled": false,
-    "createdAt": "2026-02-27T12:06:48.628Z"
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-03-15T11:56:56.307Z"
   },
   {
     "subscription": {
@@ -37,11 +37,11 @@
         "auth": "lBPn47qC-rxLd4LvliYegw"
       }
     },
-    "lat": -7.3100572,
-    "lng": 112.7499014,
+    "lat": -7.310064,
+    "lng": 112.7499118,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-01T09:33:39.150Z"
+    "createdAt": "2026-03-16T11:52:49.647Z"
   },
   {
     "subscription": {
@@ -56,6 +56,6 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-02T00:55:14.150Z"
+    "createdAt": "2026-03-07T03:32:50.762Z"
   }
 ]

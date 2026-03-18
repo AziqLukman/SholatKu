@@ -108,6 +108,17 @@ export default function Sidebar() {
             <span className="material-icons">settings</span>
             <span className="hidden lg:block ml-3">Setelan</span>
           </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`w-full flex items-center p-3 rounded-lg font-medium transition-all duration-200 ${
+              activeTab === 'profile'
+                ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-800 dark:hover:text-white'
+            }`}
+          >
+            <span className="material-icons">account_circle</span>
+            <span className="hidden lg:block ml-3">Profil Saya</span>
+          </button>
         </div>
 
         {/* Next Prayer Card */}
