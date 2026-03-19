@@ -4,9 +4,32 @@ import { useApp } from '../context/AppContext'
 
 const changelogData = [
   {
+    version: '1.8.0',
+    date: '19 Maret 2026',
+    isNew: true,
+    items: [
+      {
+        title: 'THR Spesial Lebaran Ekstra 🎁',
+        description: 'Rayakan hari kemenangan dengan berburu Amplop THR! Buka kotak kado emas yang muncul setelah Ramadhan usai untuk memenangkan hadiah kejutan spesial.'
+      },
+      {
+        title: 'Interaksi & Animasi Premium ✨',
+        description: 'Tampilan amplop melayang yang mewah dengan animasi goyang (shake) cerdas. Amplop yang sudah dibuka otomatis akan menyembunyikan diri di tepi kanan layar persis seperti widget interaktif masa kini.'
+      },
+      {
+        title: 'Pengamanan Ketat Database 🛡️',
+        description: 'Setiap klaim yang masuk dilindungi logika sistem terpusat super aman. Mengandalkan metode transaksi langsung yang memastikan: 1 pengguna 1 Amplop selamanya tanpa celah.'
+      },
+      {
+        title: 'Jadwal & Hitung Mundur Otomatis ⏳',
+        description: 'Amplop dilengkapi gembok waktu hitung mundur (countdown) pintar. Kejuatan hadiah THR otomatis diproteksi berlapis dan hanya bisa digenggam pas jadwal rilis tiba.'
+      }
+    ]
+  },
+  {
     version: '1.7.0',
     date: '18 Maret 2026',
-    isNew: true,
+    isNew: false,
     items: [
       {
         title: 'Sistem Akun & Sinkronisasi Cloud ☁️',
@@ -246,11 +269,11 @@ export default function Changelog({ onClose }) {
             <img src="/icon.png" alt="Logo SholatKu" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">SholatKu</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.7.0</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5">v1.8.0</p>
           
           <div className="bg-slate-100 dark:bg-slate-700/50 px-4 py-2 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300 flex items-center gap-2">
             <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
-            <span>Update: 18 Maret 2026</span>
+            <span>Update: 19 Maret 2026</span>
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { database } from '../utils/firebase'
 import { ref, get, set } from 'firebase/database'
 import { fetchEquranSchedule } from '../data/indonesiaLocations'
+import THREnvelope from './THREnvelope'
 
 const TRACKER_KEY = 'sholatku-ramadhan-tracker-v1'
 
@@ -951,6 +952,18 @@ export default function RamadhanTracker() {
                     </div>
                   )}
                 </div>
+                <div className="mt-8 relative z-50">
+                  <THREnvelope />
+                </div>
+
+                <button 
+                  onClick={() => setShowEidCelebration(true)}
+                  className="mt-6 text-[10px] md:text-xs font-bold text-white/30 hover:text-white/60 transition-colors uppercase tracking-widest flex items-center justify-center gap-1 mx-auto"
+                >
+                  <span className="material-icons text-sm">replay</span>
+                  Putar Ulang Animasi Tirai
+                </button>
+
               </div>
             ) : (
               <div className="text-center px-6 py-8">
