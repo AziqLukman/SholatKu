@@ -12,8 +12,12 @@ import Doa from './components/Doa'
 import Setelan from './components/Setelan'
 import RamadhanTracker from './components/RamadhanTracker'
 import Tasbih from './components/Tasbih'
+import InstallPWA from './components/InstallPWA'
+import NotificationRequest from './components/NotificationRequest'
+import Changelog from './components/Changelog'
 
 function AppContent() {
+
   const {
     activeTab, toggleDarkMode, setActiveTab,
     location, setLocation,
@@ -163,6 +167,8 @@ function AppContent() {
           </div>
         </main>
       </div>
+      <InstallPWA />
+      <NotificationRequest />
     </div>
   )
 }

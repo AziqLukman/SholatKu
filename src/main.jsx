@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
+import { registerSW } from 'virtual:pwa-register'
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm('Konten baru tersedia. Muat ulang sekarang?')) {
+      updateSW(true)
+    }
+  },
+})
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

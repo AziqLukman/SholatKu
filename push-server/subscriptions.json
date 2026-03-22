@@ -12,7 +12,7 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-19T03:03:16.092Z"
+    "createdAt": "2026-03-22T19:09:23.570Z"
   },
   {
     "subscription": {
@@ -36,11 +36,11 @@
         "auth": "oSnlL1V15mtTJiBr68EvAw"
       }
     },
-    "lat": -7.2462836,
-    "lng": 112.7377674,
+    "lat": -7.23523955168748,
+    "lng": 112.6124712353191,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-19T02:36:41.276Z"
+    "createdAt": "2026-02-20T11:40:27.815Z"
   },
   {
     "subscription": {
@@ -70,6 +70,6 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-02-20T00:11:51.428Z"
+    "createdAt": "2026-02-20T02:54:19.019Z"
   }
 ]

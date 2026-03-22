@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { requestNotificationPermission } from '../utils/notifications'
+import Changelog from './Changelog'
 
 export default function Setelan() {
   const {
+    activeTab, setActiveTab,
     darkMode, toggleDarkMode,
     location, setLocation,
     favorites, addFavorite, removeFavorite,
@@ -15,6 +17,7 @@ export default function Setelan() {
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
+  const [showChangelog, setShowChangelog] = useState(false)
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
@@ -239,10 +242,35 @@ export default function Setelan() {
       </div>
 
       {/* Tentang */}
-      <div className="glass-panel rounded-lg p-4 text-center text-xs text-slate-400 space-y-1">
-        <p>SholatKu v1.1 — Jadwal Sholat by Ajekkk</p>
+      <div>
+        <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Tentang Aplikasi</h3>
+        <div className="bg-white dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10 divide-y divide-slate-100 dark:divide-white/5 overflow-hidden">
+          <button
+            onClick={() => setShowChangelog(true)}
+            className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <span className="material-icons">info</span>
+              </div>
+              <div>
+                <span className="text-slate-800 dark:text-white font-medium block">Versi 1.3.0</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 block mt-0.5">Lihat apa yang baru</span>
+              </div>
+            </div>
+            <span className="material-icons text-slate-400">chevron_right</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Footer text */}
+      <div className="text-center text-xs text-slate-400 space-y-1 pb-4">
+        <p>SholatKu v1.3.0 — Jadwal Sholat by Ajekkk</p>
         <p>Data dari <a href="https://aladhan.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Aladhan API</a></p>
       </div>
+
+      {/* Modal Changelog Popup */}
+      {showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
     </div>
   )
 }
