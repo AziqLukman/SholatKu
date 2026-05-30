@@ -3,6 +3,10 @@
 // Handles Web Push + Background notifications
 // ============================================
 
+self.addEventListener('install', (event) => {
+  self.skipWaiting()
+})
+
 // ---- Data prayer times (dari main app via postMessage) ----
 let prayerData = null
 let checkTimer = null
@@ -34,7 +38,10 @@ const sentNotifs = new Map()
 function wasNotifSentToday(key) {
   const stored = sentNotifs.get(key)
   if (!stored) return false
-  return new Date(stored).toDateString() === new Date().toDateString()
+  
+  // BUAT TESTING: Cooldown 61 detik aja biar bisa ditest berkali-kali di jam yang sama
+  const diff = Date.now() - new Date(stored).getTime()
+  return diff < 61000
 }
 
 function markNotifSent(key) {
@@ -134,14 +141,26 @@ self.addEventListener('push', (event) => {
 // --- Klik notifikasi → buka app ---
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
+  
+  const payload = {
+    type: 'NOTIF_CLICKED',
+    title: event.notification.title,
+    body: event.notification.body
+  }
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.postMessage(payload)
           return client.focus()
         }
       }
-      return clients.openWindow('/')
+      
+      const url = new URL('/', self.location.origin)
+      url.searchParams.set('notif_title', event.notification.title)
+      url.searchParams.set('notif_body', event.notification.body)
+      return clients.openWindow(url.toString())
     })
   )
 })

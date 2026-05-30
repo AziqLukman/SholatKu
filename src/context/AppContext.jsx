@@ -64,6 +64,9 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : {}
   })
 
+  // AI Modal State
+  const [isAiOpen, setAiOpen] = useState('hidden')
+
   // Load cloud data when user logs in
   useEffect(() => {
     if (user) {
@@ -157,6 +160,7 @@ export function AppProvider({ children }) {
     haidMode, setHaidMode,
     ramadhanStartDate, setRamadhanStartDate,
     hafalanData, toggleHafalan,
+    isAiOpen, setAiOpen,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

@@ -210,11 +210,20 @@ function isTimeMatch(targetTimeStr) {
 function wasNotifSentToday(key) {
   const stored = localStorage.getItem(key)
   if (!stored) return false
-  return new Date(stored).toDateString() === new Date().toDateString()
+  
+  // [MODE TESTING] Beri jeda 61 detik agar tidak spam bertubi-tubi dalam 1 menit yang sama,
+  // tapi user tetep bisa ngetest berulang kali asal mundurin jam lagi.
+  const lastTime = parseInt(stored, 10)
+  if (isNaN(lastTime)) return false
+  return (Date.now() - lastTime) < 61000
 }
 
 function markNotifSent(key) {
-  localStorage.setItem(key, new Date().toISOString())
+  localStorage.setItem(key, Date.now().toString())
+}
+
+function markNotifSentToday(key) {
+  localStorage.setItem(key, Date.now().toString())
 }
 
 function cleanOldNotifKeys() {
@@ -223,8 +232,11 @@ function cleanOldNotifKeys() {
     const key = localStorage.key(i)
     if (key && key.startsWith('sholatku-notif-')) {
       const stored = localStorage.getItem(key)
-      if (stored && new Date(stored).toDateString() !== new Date().toDateString()) {
-        keysToRemove.push(key)
+      const storedTime = parseInt(stored, 10)
+      if (!isNaN(storedTime)) {
+        if (new Date(storedTime).toDateString() !== new Date().toDateString()) {
+          keysToRemove.push(key)
+        }
       }
     }
   }
@@ -262,8 +274,50 @@ export function checkPrayerNotification(prayerTimes, notificationsEnabled, imsak
     for (const prayer of prayerTimes.filter(p => p.name !== 'Imsak' && p.name !== 'Terbit')) {
       if (isTimeMatch(prayer.time) && !wasNotifSentToday(`sholatku-notif-${prayer.name}`)) {
         sendNotification(`🕌 Waktu ${prayer.name}`, `Sudah masuk waktu ${prayer.name} (${prayer.time}). Ayo sholat!`)
-        markNotifSent(`sholatku-notif-${prayer.name}`)
+        markNotifSentToday(`sholatku-notif-${prayer.name}`)
+        playAdzan()
       }
     }
+  }
+}
+
+let globalAdzanAudio = null
+
+export function initAdzanAudio() {
+  if (!globalAdzanAudio) {
+    globalAdzanAudio = new Audio('/audio/adzan/bikin_nangis.mp3')
+  }
+  
+  // Selalu pancing ulang (load, play, pause) tiap kali tombol dipencet 
+  // agar browser HP (iOS/Android) nggak "mengunci" lagi audio-nya 
+  // setelah aplikasi sempet ditinggal ke background (pas ganti jam).
+  globalAdzanAudio.load()
+  const playPromise = globalAdzanAudio.play()
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      globalAdzanAudio.pause()
+      globalAdzanAudio.currentTime = 0
+    }).catch(e => {
+      console.log('[SholatKu Notif] Pancingan audio diblokir, tapi gapapa.', e)
+    })
+  }
+}
+
+// Memutar suara adzan
+export function playAdzan() {
+  if (!globalAdzanAudio) {
+    globalAdzanAudio = new Audio('/audio/adzan/bikin_nangis.mp3')
+  }
+  globalAdzanAudio.currentTime = 0
+  globalAdzanAudio.play().catch(e => {
+    console.error('[SholatKu Notif] Gagal memutar suara adzan (file tidak ada atau diblokir browser).', e)
+  })
+}
+
+// Mematikan suara adzan
+export function stopAdzan() {
+  if (globalAdzanAudio) {
+    globalAdzanAudio.pause()
+    globalAdzanAudio.currentTime = 0
   }
 }

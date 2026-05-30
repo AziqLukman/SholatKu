@@ -6,6 +6,63 @@ Pengembangan aplikasi ini mengikuti kaidah [*Semantic Versioning*](https://semve
 
 ---
 
+## [v1.8.0] - 19-03-2026
+**THR Spesial Lebaran Ekstra & Interaksi Premium**
+Fokus pada merayakan hari kemenangan setelah Ramadhan selesai dengan fitur Amplop THR yang interaktif, mewah, dan aman.
+
+### 🎁 Fitur Baru
+- **THR Spesial Lebaran Ekstra**: Rayakan hari kemenangan dengan berburu Amplop THR! Buka kotak kado emas yang muncul setelah Ramadhan usai untuk memenangkan hadiah kejutan spesial.
+- **Interaksi & Animasi Premium**: Tampilan amplop melayang yang mewah dengan animasi goyang (shake) cerdas. Amplop yang sudah dibuka otomatis akan menyembunyikan diri di tepi kanan layar persis seperti widget interaktif masa kini.
+- **Jadwal & Hitung Mundur Otomatis**: Amplop dilengkapi gembok waktu hitung mundur (countdown) pintar. Kejutan hadiah THR otomatis diproteksi berlapis dan hanya bisa digenggam pas jadwal rilis tiba.
+
+### 🛡️ Keamanan & Database
+- **Pengamanan Ketat Database**: Setiap klaim yang masuk dilindungi logika sistem terpusat super aman. Mengandalkan metode transaksi langsung yang memastikan: 1 pengguna 1 Amplop selamanya tanpa celah.
+
+---
+
+## [v1.7.0] - 18-03-2026
+**Sistem Akun, Sinkronisasi Cloud & Kustomisasi Profil**
+Fokus pada integrasi database Firebase untuk menyimpan progres ibadah, profil pengguna, dan kustomisasi avatar Islami yang lucu.
+
+### ☁️ Fitur Baru
+- **Sistem Akun & Sinkronisasi Cloud**: Kini SholatKu dilengkapi fitur Login menggunakan Email/Password atau akun Google. Seluruh progres ibadah, hafalan, dan pengaturan kini aman dicadangkan (auto-sync) ke Firebase Realtime Database secara instan.
+- **Migrasi Data Cerdas**: Saat login untuk pertama kalinya, semua progres offline yang sebelumnya ada di perangkat tidak akan hilang. Sistem akan menyedotnya dan memindahkannya ke Cloud secara otomatis.
+- **Kustomisasi Profil**: Tambahkan sentuhan persona! Ubah nama sesuka hati dan pilih puluhan avatar Islami yang lucu langsung dari menu Edit Profil baru.
+
+### 🔐 Keamanan & Akun
+- **Keamanan Berlapis**: Lupa password? Tidak masalah. Disediakan tombol "Lupa Password" super praktis yang akan mengirimkan tautan reset ke email pengguna secara aman.
+
+---
+
+## [v1.6.0] - 02-03-2026
+**Hafalan Al-Qur'an & Bantuan Mode Hafalan**
+Fokus pada penyempurnaan fitur Al-Qur'an dengan menambahkan Mode Hafalan (mengaburkan teks), pengulangan audio (looping), dan optimasi anti-lag.
+
+### 📖 Fitur Baru
+- **Fitur Hafalan Al-Qur'an**: Tandai ayat-ayat yang sudah dihafal langsung dari menu Al-Qur'an. Progres hafalan per surat tersimpan otomatis di perangkat pengguna.
+- **Bantuan Mode Hafalan (Blur)**: Latih hafalan dengan menutup/mengaburkan (blur) ayat Arab. Ketuk kata demi kata untuk melihat bocorannya, atau lihat seluruh ayat sekaligus.
+- **Pengulangan Audio (Looping)**: Dengarkan lantunan murottal Qari pada satu ayat secara berulang-ulang tanpa henti untuk mempermudah proses menghafal secara audio.
+
+### ⚡ Peningkatan Performa
+- **Optimasi Anti-Lag**: Optimasi rendering komponen ayat menggunakan `React.memo`. Mengaktifkan Mode Hafalan pada surat panjang seperti Al-Baqarah kini dijamin mulus tanpa lag atau patah-patah.
+
+---
+
+## [v1.5.0] - 25-02-2026
+**Jadwal Sholat Kemenag RI & Pengaturan Ramadhan**
+Fokus pada peningkatan akurasi jadwal sholat menggunakan API EQuran (Kemenag RI) dan penyesuaian fleksibel awal bulan Ramadhan.
+
+### 🕌 Fitur Baru
+- **Jadwal Sholat Kemenag RI**: Sumber data jadwal sholat diubah ke EQuran.id (Kemenag RI) agar waktu sholat lebih akurat untuk seluruh Indonesia. Mendukung 517 kab/kota di 34 provinsi.
+- **Fallback Otomatis Luar Negeri**: Untuk lokasi di luar Indonesia, jadwal sholat otomatis menggunakan Aladhan API sebagai fallback. Pengguna tidak perlu mengatur apapun.
+- **Pengaturan Awal Ramadhan**: Fitur baru di Setelan untuk mengatur tanggal mulai Ramadhan secara manual. Cocok untuk menangani perbedaan penetapan antar ormas (NU, Muhammadiyah, Pemerintah).
+- **Tahun Hijriah Otomatis**: Tahun Hijriah kini dihitung otomatis, tidak perlu update manual setiap tahun baru Hijriah.
+
+### 🛠️ Perbaikan Bug & Optimasi
+- Memperbaiki waktu sholat yang terlalu cepat dari sumber sebelumnya, dan mengoptimasi jumlah request API agar lebih hemat bandwidth.
+
+---
+
 ## [v1.4.0] - 23-02-2026
 **Mode Haid untuk Wanita**
 Fokus pada fitur khusus wanita agar tetap bisa menjaga streak saat berhalangan.

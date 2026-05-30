@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================
-   SholatKu — Global Styles
+   SholatKu v2.0 — Glass-Bento Hybrid Design System
    ============================================ */
 
 * {
@@ -23,7 +26,9 @@ body {
   color: white;
 }
 
-/* Glassmorphism Panels */
+/* ============================================
+   Glassmorphism Panels (Legacy — tetap dipertahankan)
+   ============================================ */
 .glass-panel {
   background: rgba(16, 34, 32, 0.6);
   backdrop-filter: blur(12px);
@@ -38,7 +43,83 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Glow Effects */
+/* ============================================
+   Glass-Clay Design System (NEW — Bento Hybrid)
+   ============================================ */
+
+/* Light mode glass-clay card */
+.glass-clay-light {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 20px 0 rgba(15, 23, 42, 0.03),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+    inset -1px -1px 2px rgba(148, 163, 184, 0.15);
+  border-radius: 20px;
+}
+
+/* Dark mode glass-clay card */
+.glass-clay-dark {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
+
+/* Sage-green hero glass — Light */
+.glass-sage-light {
+  background: rgba(209, 231, 221, 0.45);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 20px 0 rgba(15, 23, 42, 0.03),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+    inset -1px -1px 2px rgba(148, 163, 184, 0.15);
+  border-radius: 20px;
+}
+
+/* Sage-green hero glass — Dark */
+.glass-sage-dark {
+  background: rgba(13, 147, 137, 0.22);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
+
+/* ============================================
+   Floating Ambient Blur Animations (NEW)
+   ============================================ */
+@keyframes float-organics-1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(40px, -60px) scale(1.15); }
+  66% { transform: translate(-30px, 30px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes float-organics-2 {
+  0% { transform: translate(0px, 0px) scale(1.0); }
+  50% { transform: translate(-50px, 50px) scale(1.2); }
+  100% { transform: translate(0px, 0px) scale(1.0); }
+}
+
+.animate-float-organic-1 {
+  animation: float-organics-1 30s ease-in-out infinite alternate;
+}
+
+.animate-float-organic-2 {
+  animation: float-organics-2 35s ease-in-out infinite alternate;
+}
+
+/* ============================================
+   Glow Effects (preserved + enhanced)
+   ============================================ */
 .gold-glow {
   text-shadow: 0 0 15px rgba(244, 196, 48, 0.4);
 }
@@ -47,7 +128,9 @@ body {
   box-shadow: 0 0 20px rgba(13, 150, 139, 0.3);
 }
 
-/* Animations */
+/* ============================================
+   Animations (preserved + new)
+   ============================================ */
 @keyframes pulse-slow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
@@ -68,6 +151,17 @@ body {
   to { transform: rotate(360deg); }
 }
 
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle scale pulse for hero elements */
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
 .animate-pulse-slow {
   animation: pulse-slow 2s ease-in-out infinite;
 }
@@ -80,16 +174,17 @@ body {
   animation: slide-up 0.5s ease-out;
 }
 
-@keyframes slide-down {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .animate-slide-down {
   animation: slide-down 0.5s ease-out;
 }
 
-/* Scrollbar */
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -107,29 +202,48 @@ body {
   background: rgba(13, 150, 139, 0.5);
 }
 
-/* Tab transitions */
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================
+   Tab transitions
+   ============================================ */
 .tab-content-enter {
   animation: fade-in 0.2s ease-out;
 }
 
-/* Compass */
+/* ============================================
+   Compass
+   ============================================ */
 .compass-needle {
   transition: transform 0.3s ease-out;
 }
 
-/* Accordion */
+/* ============================================
+   Accordion
+   ============================================ */
 .accordion-content {
   overflow: hidden;
   transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
 }
 
-/* Dark mode transitions */
+/* ============================================
+   Dark mode transitions
+   ============================================ */
 .dark-transition,
 .dark-transition * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Mobile bottom tab */
+/* ============================================
+   Responsive Layout
+   ============================================ */
 @media (max-width: 1023px) {
   .sidebar-desktop {
     display: none;
@@ -140,4 +254,84 @@ body {
   .bottom-tab-mobile {
     display: none;
   }
+}
+
+/* ============================================
+   SVG Countdown Gauge (NEW)
+   ============================================ */
+.countdown-gauge-track {
+  transition: stroke-dashoffset 0.8s ease-out;
+}
+
+/* ============================================
+   Glass-Bento Interactive Hover (NEW)
+   ============================================ */
+.bento-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-card-hover:hover {
+  transform: translateY(-2px);
+}
+
+.bento-card-hover:active {
+  transform: scale(0.98);
+}
+
+
+/* Elegant Soft UI (NEW) */
+.elegant-card-light {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 16px 40px -12px rgba(13, 150, 139, 0.08);
+  border-radius: 24px;
+}
+
+.elegant-card-dark {
+  background: rgba(11, 27, 24, 0.65);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+}
+
+/* Islamic Watermark */
+.islamic-watermark {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20L20 0ZM20 4L7 20L20 36L33 20L20 4Z' fill='currentColor' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ============================================
+   Leaflet Dark Mode Map Filter
+   ============================================ */
+.map-dark-filter .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.map-dark-filter .leaflet-marker-pane,
+.map-dark-filter .leaflet-popup-pane,
+.map-dark-filter .leaflet-shadow-pane {
+  filter: none;
+}
+
+/* Leaflet popup styling override */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: none !important;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

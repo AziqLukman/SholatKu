@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 
-export function useCountdown(prayerTimes) {
+export function useCountdown(prayerTimes, targetOffset) {
+  const defaultOffset = -new Date().getTimezoneOffset() / 60
+  const activeOffset = typeof targetOffset === 'number' ? targetOffset : defaultOffset
+
   const [currentTime, setCurrentTime] = useState(new Date())
   const [nextPrayer, setNextPrayer] = useState(null)
   const [currentPrayer, setCurrentPrayer] = useState(null)
@@ -9,20 +12,25 @@ export function useCountdown(prayerTimes) {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date()
-      setCurrentTime(now)
+      
+      // Sesuaikan selisih waktu zona lokasi terpilih dengan zona lokal laptop
+      const localOffset = -now.getTimezoneOffset() / 60
+      const diffMs = (activeOffset - localOffset) * 60 * 60 * 1000
+      const nowAdjusted = new Date(now.getTime() + diffMs)
+      
+      setCurrentTime(nowAdjusted)
 
       if (!prayerTimes || prayerTimes.length === 0) return
 
-      // Parse prayer times into Date objects for today
+      // Parse prayer times into Date objects for today menggunakan nowAdjusted
       const prayerDates = prayerTimes.map(p => {
         const [h, m] = p.time.split(':').map(Number)
-        const d = new Date(now)
+        const d = new Date(nowAdjusted)
         d.setHours(h, m, 0, 0)
         return { ...p, date: d }
       })
 
-      // Find current and next prayer
-      // Prayers that count for "current" (excluding Imsak and Terbit)
+      // Find current and next prayer using nowAdjusted
       const mainPrayers = prayerDates.filter(
         p => p.name !== 'Imsak' && p.name !== 'Terbit'
       )
@@ -31,7 +39,7 @@ export function useCountdown(prayerTimes) {
       let next = null
 
       for (let i = 0; i < mainPrayers.length; i++) {
-        if (now >= mainPrayers[i].date) {
+        if (nowAdjusted >= mainPrayers[i].date) {
           current = mainPrayers[i]
           next = mainPrayers[i + 1] || null
         }
@@ -53,9 +61,9 @@ export function useCountdown(prayerTimes) {
       setCurrentPrayer(current)
       setNextPrayer(next)
 
-      // Calculate countdown
+      // Calculate countdown using nowAdjusted
       if (next) {
-        let diff = next.date.getTime() - now.getTime()
+        let diff = next.date.getTime() - nowAdjusted.getTime()
         if (diff < 0) diff += 24 * 60 * 60 * 1000 // wrap to tomorrow
 
         const hours = Math.floor(diff / (1000 * 60 * 60))
@@ -69,7 +77,7 @@ export function useCountdown(prayerTimes) {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [prayerTimes])
+  }, [prayerTimes, activeOffset])
 
   const formattedTime = currentTime.toLocaleTimeString('id-ID', {
     hour: '2-digit',
