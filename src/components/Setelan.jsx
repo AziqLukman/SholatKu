@@ -111,6 +111,34 @@ export default function Setelan() {
         <p className={`text-[11px] font-bold uppercase tracking-wider ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Kustomisasi Pengalamanmu</p>
       </div>
 
+      {/* Akun & Profil */}
+      <div>
+        <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Akun</h3>
+        <div className={`rounded-2xl border transition-all overflow-hidden ${darkMode ? 'glass-clay-dark' : 'glass-clay-light'}`}>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`w-full flex items-center justify-between p-4 transition-all text-left bento-card-hover ${
+              darkMode ? 'hover:bg-white/5' : 'hover:bg-white/60'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                darkMode ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600'
+              }`}>
+                <span className="material-icons text-[20px]">account_circle</span>
+              </div>
+              <div>
+                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Profil Pengguna</span>
+                <span className={`text-[11px] font-medium block mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Kelola akun & backup data</span>
+              </div>
+            </div>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              <span className="material-icons text-[20px]">chevron_right</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
       {/* Tampilan */}
       <div>
         <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Tampilan</h3>

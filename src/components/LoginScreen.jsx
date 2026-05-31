@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 
 export default function LoginScreen() {
   const { login, register, loginWithGoogle, resetPassword, loading } = useAuth();
-  const { setActiveTab } = useApp();
+  const { setActiveTab, darkMode } = useApp();
   
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
@@ -75,8 +75,16 @@ export default function LoginScreen() {
 
   return (
     <div className="max-w-md mx-auto animate-fade-in py-4 lg:py-8">
-      <div className="glass-panel p-6 md:p-8 rounded-2xl relative overflow-hidden">
-         <div className="text-center mb-6">
+      <div className={`${darkMode ? 'elegant-card-dark' : 'elegant-card-light'} p-6 md:p-8 rounded-2xl relative overflow-hidden`}>
+         
+         <button 
+           onClick={() => setActiveTab('settings')}
+           className={`absolute top-4 left-4 p-2 rounded-xl transition-all flex items-center justify-center ${darkMode ? 'hover:bg-white/10 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-800'}`}
+         >
+           <span className="material-icons">arrow_back</span>
+         </button>
+
+         <div className="text-center mb-6 mt-4">
             <h2 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">
               {isRegister ? 'Buat Akun' : 'Masuk Akun'}
             </h2>

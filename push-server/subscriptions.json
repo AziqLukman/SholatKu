@@ -8,11 +8,11 @@
         "auth": "PxRpuR-YpBqUuC7pltgj5A"
       }
     },
-    "lat": -7.23522,
-    "lng": 112.612666,
+    "lat": -7.2344,
+    "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-14T09:18:48.107Z"
+    "createdAt": "2026-03-12T00:27:57.404Z"
   },
   {
     "subscription": {
@@ -22,11 +22,11 @@
         "auth": "oSnlL1V15mtTJiBr68EvAw"
       }
     },
-    "lat": -7.3100894568263515,
-    "lng": 112.74984332423585,
+    "lat": -7.2356089452414905,
+    "lng": 112.61245820881754,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-15T11:56:56.307Z"
+    "createdAt": "2026-04-01T23:48:04.975Z"
   },
   {
     "subscription": {
@@ -37,11 +37,11 @@
         "auth": "lBPn47qC-rxLd4LvliYegw"
       }
     },
-    "lat": -7.310064,
-    "lng": 112.7499118,
+    "lat": -7.3100867,
+    "lng": 112.7498741,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-03-16T11:52:49.647Z"
+    "createdAt": "2026-05-26T11:49:28.688Z"
   },
   {
     "subscription": {
@@ -57,5 +57,35 @@
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
     "createdAt": "2026-03-07T03:32:50.762Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/eW_GDeAkR44:APA91bHh25k31yFaI2b2K_a1ED_0qVtQxOKUiRKX_gCNJAZHZgUBffHQQ2Pzzt9KRhFX__z1Yp_KDrKyIPKFrOatiOCoXzDrUD1d83yKC3DUWI-RiPPtJqUKeM1yW20t1YAqaKjwQP6x",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BJ5I4kTiuwnB4FsluCtXPv3ebGgr2S6Xw9mtrLv04X92l0MzlBbGkamNHKMTTZOEX535LXdbePGB1BbMYnMNhAk",
+        "auth": "wYnBuWuPHQGMqwmz33iWhQ"
+      }
+    },
+    "lat": -7.3101198,
+    "lng": 112.7498755,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-05-31T11:15:26.412Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/dLJdH2UfcHY:APA91bFmlDCWiKxPq46N-3whZQpAbUbwzQv83aK8ueud0F7HOkeaLVml0aslJ9VEnvWNDob6lpZd1m2liATLAU9sOr5KqoH_IwLssVVpbRb-KsEKy9SsVAA43fEEJPhpW13qWXIiuTDc",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BPWg7jW9gJ8FgT_XCnZ5e2EXBba7LC16HWrqUKFR4fYApUli3rTAsQckeVgAdDa4MfGkN5Jp5p2cGn5oym3HuOU",
+        "auth": "np960LtgtZAIziUQe6eZ9g"
+      }
+    },
+    "lat": -7.2344,
+    "lng": 112.6077,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": false,
+    "createdAt": "2026-05-31T01:40:57.526Z"
   }
 ]

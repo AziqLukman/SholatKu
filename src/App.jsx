@@ -151,37 +151,6 @@ function AppContent() {
 
         {/* Konten Utama */}
         <main className="flex-1 relative z-10 overflow-y-auto h-screen p-4 lg:p-8 pb-32 lg:pb-8">
-          {/* Header Mobile */}
-          <header className="flex justify-between items-center mb-8 lg:hidden">
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
-              Sholat<span className="text-primary">Ku</span>
-            </h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white flex items-center justify-center"
-                aria-label="Buka Profil"
-              >
-                <span className="material-icons">account_circle</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white flex items-center justify-center"
-                aria-label="Buka Setelan"
-              >
-                <span className="material-icons">settings</span>
-              </button>
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 rounded-lg bg-white/80 dark:bg-white/10 text-slate-600 dark:text-white"
-                aria-label="Ubah mode tampilan"
-              >
-                <span className="material-icons">
-                  {darkMode ? 'light_mode' : 'dark_mode'}
-                </span>
-              </button>
-            </div>
-          </header>
 
           <div className="max-w-4xl mx-auto">
             {loading ? (
