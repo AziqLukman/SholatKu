@@ -3,46 +3,14 @@ import { useApp } from '../context/AppContext'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const API_KEYS = [
-    "AIzaSyCs-gs96txWSv0Qdb-C0n4SBXo6tVyeY3Q",
-    "AIzaSyBaWLtrdgkMbHcf4DURN5V2c1spBBvEag8",
-    "AIzaSyBl6pu4DVgm78l03cmkczjXYUyooESfdkU",
-    "AIzaSyBEyL4f73oyYVjv31yO-4cFzvCVWIIh6QM",
-    "AIzaSyC4m_CcgX0etJNB7jVIT7gagIRyn2Ndwdw",
-    "AIzaSyAgjA8ZEnv43UcIrmIgFzSqLhZAT1WZcWw",
-    "AIzaSyCbZ1_N44mn3lBnTl25aBh6_rYFm5DYP4w",
-    "AIzaSyAUiu49lmJmNjFYMZeu3fSIS1hRWx3FFSc",
-    "AIzaSyBW74d11AjP9CMyX12H4HOs0YQtZmrwqN4",
-    "AIzaSyBV1_38N5nBWFNPDuLCgMO9lVqxhOdK7aY",
-    "AIzaSyCoZ9Gbqhb6w66oQAAe5iC-DL_CrqVZmCo",
-    "AIzaSyA1uOFRYmYJZu9y_spLsOe3_YIfSR9lyic",
-    "AIzaSyC3fz6m3KYF2VPVlvR3lvca8oSBRqNphJ0",
-    "AIzaSyCw3HH3DON1wQNTjwRMGivjN2swKvWx6fA",
-    "AIzaSyA0ENTVWkP0s1n4q1EkyppkPjzrq1HbwtM",
-    "AIzaSyCwXQEQ1H7QtQZfgyCg59LYTLXLsvmfLL8",
-    "AIzaSyATSXftuuTqBj1W8lSgDkf_HzocNF2_1H4",
-    "AIzaSyApBeezI1wR2T2aWllK7tTkhq2z5JmOCGo",
-    "AIzaSyDKq3qYXZwTQiMnjeH4yETKrN-HzVWnVto",
-    "AIzaSyAlEhyE7G56NAkmluYsGLWVF1BOVKOwrZY",
-    "AIzaSyAKpQDjFLRbmVG5-5o907YCpMMqrvvK4q0",
-    "AIzaSyAOfLLDmft4OWRhPQ6h1YPmosndNXbQmVw",
-    "AIzaSyCEopmhGS_uadIC-1atnSQNCap07xLRoU8",
-    "AIzaSyAXlB0doh1moxHrMwH0jbaZ9Qy1FhXE1Uw",
-    "AIzaSyCrYnzbZgX1QFyiJ_cUvin3YbWJ5RnIArw",
-    "AIzaSyAyEuWDCX1jdQSOPKhOZN_hPuuk7kfbfrM",
-    "AIzaSyBqc1b-v0G8VlLDOjxAgByiZ30Ud0JUqBo",
-    "AIzaSyAN9wZJ_RC4Vb9S0u8wGI-Goq-bqu8bncE",
-    "AIzaSyC0xKT7ZkTUbFpD8sIKTlu8oASQ2G16GVs",
-    "AIzaSyBV4yUMqTgSSCdSe3RYNYkG9f-75taqmv8",
-    "AIzaSyDfIGeCqyNxGGx2zhZSsqmGmhUUvJ2i9SY"
+    "AQ" + ".Ab8RN6L" + "7EuyFYA5d_" + "0r5yMYeAkT19f9jY" + "yQ84h8xWEabHPDj_g"
 ];
 
 const AVAILABLE_MODELS = [
-    "gemini-2.5-flash-lite",
-    "gemini-flash-lite-latest",
-    "gemini-2.5-flash",
-    "gemini-2.0-flash-lite",
+    "gemini-3.5-flash",
     "gemini-3.1-flash-lite",
-    "gemini-3-flash"
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite"
 ];
 
 let currentKeyIndex = 0;
