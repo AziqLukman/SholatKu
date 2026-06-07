@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const API_KEYS = [
-  "g_jDPHbaEWx8h48QyYj9f91TkAeYMy5r0_d5AYFuE7L6NRbA.QA".split("").reverse().join("")
+  "g_jDPHbaEWx8h48QyYj9f91TkAeYMy5r0_d5AYFyuE7L6NR8bA.QA".split("").reverse().join("")
 ];
 
 const AVAILABLE_MODELS = [
