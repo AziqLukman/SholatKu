@@ -4,9 +4,59 @@ import { useApp } from '../context/AppContext'
 
 const changelogData = [
   {
+    version: '2.0',
+    date: '6 Juni 2026',
+    isNew: true,
+    items: [
+      {
+        title: 'Desain Baru & Glassmorphism 🎨',
+        description: 'Perombakan besar-besaran (Redesign) tampilan aplikasi menjadi lebih elegan, premium, dan dinamis. Hadir dengan efek kaca (glassmorphism) yang transparan dan palet warna modern.'
+      },
+      {
+        title: 'Asisten AI Islami Pintar 🤖',
+        description: 'Tanya jawab hukum agama, tata cara ibadah, atau seputar puasa langsung ke Asisten AI yang cerdas. Tidak perlu ngetik, cukup panggil lewat fitur input suara (Microphone)!'
+      },
+      {
+        title: 'Radar Masjid Terdekat 🕌',
+        description: 'Lagi di luar dan bingung cari masjid? Kini ada peta interaktif canggih (Mosque Finder) yang mendeteksi posisi Anda dan memberikan navigasi langsung menuju masjid di sekitar.'
+      },
+      {
+        title: 'Animasi & Micro-Interactions ✨',
+        description: 'Sistem navigasi dan transisi halaman kini terasa sangat smooth dengan tambahan animasi hover, klik, dan perpindahan komponen yang memanjakan mata.'
+      },
+      {
+        title: 'Optimasi Mode Gelap (Dark Mode) 🌙',
+        description: 'Kombinasi warna latar dan teks pada mode gelap telah disempurnakan sehingga tidak membuat mata cepat lelah saat membaca Al-Quran atau berdoa di malam hari.'
+      },
+      {
+        title: 'Stabilitas Voice Input AI 🎙️',
+        description: 'Sistem pengenalan suara pada AI dibuat lebih responsif dan tanggap menangkap ucapan secara realtime.'
+      },
+      {
+        title: 'Peningkatan PWA & Performa ⚡',
+        description: 'Kinerja keseluruhan aplikasi jadi jauh lebih ngebut! Pengalaman menggunakannya kini sudah sangat mirip dengan aplikasi native sungguhan.'
+      }
+    ]
+  },
+  {
+    version: '1.9',
+    date: '30 Mei 2026',
+    isNew: false,
+    items: [
+      {
+        title: 'Perbaikan Bug & Stabilisasi 🛠️',
+        description: 'Melakukan perbaikan pada sejumlah bug minor serta mengoptimalkan kode (refactoring) untuk performa aplikasi yang lebih stabil.'
+      },
+      {
+        title: 'Optimasi Akses API ⚡',
+        description: 'Mengurangi beban render pada komponen kalender serta mengoptimalkan pemanggilan request API agar lebih hemat data dan responsif.'
+      }
+    ]
+  },
+  {
     version: '1.8.0',
     date: '19 Maret 2026',
-    isNew: true,
+    isNew: false,
     items: [
       {
         title: 'THR Spesial Lebaran Ekstra 🎁',
@@ -273,13 +323,13 @@ export default function Changelog({ onClose }) {
             <img src="/icon.png" alt="Logo SholatKu" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className={`font-heading text-2xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>SholatKu</h1>
-          <p className={`text-sm mb-5 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>v1.8.0</p>
+          <p className={`text-sm mb-5 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>v2.0</p>
           
           <div className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${
             darkMode ? 'bg-slate-800 text-slate-300 border border-white/5' : 'bg-slate-50 text-slate-600 border border-slate-200'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${darkMode ? 'bg-slate-500' : 'bg-slate-400'}`}></span>
-            <span>Update: 19 Maret 2026</span>
+            <span>Update: 6 Juni 2026</span>
           </div>
         </div>
 

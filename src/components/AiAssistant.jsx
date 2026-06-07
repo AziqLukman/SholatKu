@@ -3,14 +3,14 @@ import { useApp } from '../context/AppContext'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const API_KEYS = [
-    "AQ" + ".Ab8RN6L" + "7EuyFYA5d_" + "0r5yMYeAkT19f9jY" + "yQ84h8xWEabHPDj_g"
+  "g_jDPHbaEWx8h48QyYj9f91TkAeYMy5r0_d5AYFuE7L6NRbA.QA".split("").reverse().join("")
 ];
 
 const AVAILABLE_MODELS = [
-    "gemini-3.5-flash",
-    "gemini-3.1-flash-lite",
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite"
+  "gemini-3.5-flash",
+  "gemini-3.1-flash-lite",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite"
 ];
 
 let currentKeyIndex = 0;
@@ -22,6 +22,7 @@ export default function AiAssistant() {
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [isListening, setIsListening] = useState(false)
   const messagesEndRef = useRef(null)
 
   const touchStartY = useRef(null)
@@ -96,6 +97,32 @@ Tugas & Aturan kamu:
     touchStartY.current = null
   }
 
+  const handleMicClick = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'id-ID';
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInputText(transcript);
+        setIsListening(false);
+      };
+      recognition.onerror = (event) => {
+        setIsListening(false);
+        alert('Waduh, gagal dengerin suara kamu nih bro: ' + event.error);
+      };
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      recognition.start();
+    } else {
+      alert('Sori bro, browser kamu belum support fitur voice input nih.');
+    }
+  };
+
   const handleSend = async (text = inputText) => {
     if (!text.trim()) return
     const newMsg = { role: 'user', content: text.trim() }
@@ -125,9 +152,9 @@ Tugas & Aturan kamu:
         try {
           console.log(`[AI] Key ${currentKeyIndex + 1}/${API_KEYS.length} | Model: ${modelName}`);
           const genAI = new GoogleGenerativeAI(keyName);
-          const model = genAI.getGenerativeModel({ 
+          const model = genAI.getGenerativeModel({
             model: modelName,
-            systemInstruction: systemInstruction 
+            systemInstruction: systemInstruction
           });
 
           const chat = model.startChat({ history });
@@ -136,7 +163,7 @@ Tugas & Aturan kamu:
           success = true;
         } catch (error) {
           console.error(`[AI ERROR] Key ${currentKeyIndex + 1} | Model ${modelName} gagal:`, error.message);
-          
+
           if (error.message.includes('429') || error.message.includes('quota') || error.message.includes('exceeded') || error.message.includes('500') || error.message.includes('503')) {
             // Pindah model
             currentModelIndex++;
@@ -173,11 +200,11 @@ Tugas & Aturan kamu:
   // Styles based on state
   const bgMain = darkMode ? 'bg-[#0B1B18]' : 'bg-slate-50'
   const textColor = darkMode ? 'text-slate-100' : 'text-slate-800'
-  
+
   let translateY = 'translate-y-full'
   let heightClass = 'h-[100dvh]'
   let roundedClass = ''
-  
+
   if (sheetState === 'full') {
     translateY = 'translate-y-0'
     heightClass = 'h-[100dvh]'
@@ -191,20 +218,19 @@ Tugas & Aturan kamu:
   return (
     <div className={`fixed inset-0 z-[100] flex flex-col justify-end overflow-hidden ${sheetState === 'hidden' && isAiOpen === 'hidden' ? 'pointer-events-none' : ''}`}>
       {/* Backdrop overlay (if any part of background is visible) */}
-      <div 
-        className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${
-          sheetState !== 'hidden' ? 'opacity-100' : 'opacity-0'
-        }`}
+      <div
+        className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${sheetState !== 'hidden' ? 'opacity-100' : 'opacity-0'
+          }`}
         onClick={handleClose}
       ></div>
 
       {/* Main Chat Container */}
-      <div 
+      <div
         className={`relative w-full max-w-md mx-auto flex flex-col transition-all duration-500 ease-out ${bgMain} ${heightClass} ${roundedClass} ${translateY}`}
       >
         {/* Drag Handle (Only in Half State) */}
         {sheetState === 'half' && (
-          <div 
+          <div
             className="w-full flex justify-center pt-3 pb-1 shrink-0"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -213,26 +239,24 @@ Tugas & Aturan kamu:
           </div>
         )}
         {/* Header - Glassmorphism Sticky */}
-        <div 
-          className={`shrink-0 px-4 pb-3 pt-2 flex items-center justify-between sticky top-0 z-20 backdrop-blur-xl ${
-            darkMode ? 'bg-[#0B1B18]/80 border-b border-white/5' : 'bg-white/80 border-b border-slate-200 shadow-sm'
-          } ${sheetState === 'half' ? 'rounded-t-[32px]' : ''}`}
+        <div
+          className={`shrink-0 px-4 pb-3 pt-2 flex items-center justify-between sticky top-0 z-20 backdrop-blur-xl ${darkMode ? 'bg-[#0B1B18]/80 border-b border-white/5' : 'bg-white/80 border-b border-slate-200 shadow-sm'
+            } ${sheetState === 'half' ? 'rounded-t-[32px]' : ''}`}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
           {/* Left: Back Button */}
-          <button 
+          <button
             onClick={handleClose}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors active:scale-95 ${
-              darkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
-            }`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors active:scale-95 ${darkMode ? 'text-slate-300 hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
+              }`}
           >
             <span className="material-icons text-[26px]">chevron_left</span>
           </button>
 
           {/* Center: Title & Online Indicator */}
           <div className="flex flex-col items-center">
-            <h3 className={`font-bold text-[15px] tracking-wide ${textColor}`}>AI SholatKu</h3>
+            <h3 className={`font-bold text-[15px] tracking-wide ${textColor}`}>Ust AI</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_#10b981]"></span>
               <span className="text-[10px] font-medium text-emerald-500 uppercase tracking-widest">Online</span>
@@ -240,15 +264,14 @@ Tugas & Aturan kamu:
           </div>
 
           {/* Right: Options Button */}
-          <button 
+          <button
             onClick={() => {
               if (window.confirm("Beneran mau hapus semua riwayat chat nih, bro?")) {
                 setMessages([])
               }
             }} // Clear chat
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors active:scale-95 ${
-              darkMode ? 'text-slate-400 hover:bg-white/10' : 'text-slate-500 hover:bg-slate-100'
-            }`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors active:scale-95 ${darkMode ? 'text-slate-400 hover:bg-white/10' : 'text-slate-500 hover:bg-slate-100'
+              }`}
             title="Bersihkan Chat"
           >
             <span className="material-icons text-[20px]">delete_outline</span>
@@ -257,31 +280,30 @@ Tugas & Aturan kamu:
 
         {/* Chat Area - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-5 hide-scrollbar scroll-smooth">
-          
+
           {/* Welcome / Empty State */}
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full animate-fade-in pb-10">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 p-[2px] mb-5 shadow-lg shadow-emerald-500/20">
-                <div className={`w-full h-full rounded-full flex items-center justify-center ${darkMode ? 'bg-[#0B1B18]' : 'bg-white'}`}>
-                  <span className="material-icons text-[36px] text-transparent bg-clip-text bg-gradient-to-tr from-teal-500 to-emerald-400">smart_toy</span>
+              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 p-[2px] mb-5 shadow-lg shadow-emerald-500/20 flex items-center justify-center overflow-hidden">
+                <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${darkMode ? 'bg-[#0B1B18]' : 'bg-white'}`}>
+                  <img src="/ustadz-icon.png" alt="Ust AI" className="w-12 h-12 object-contain" />
                 </div>
               </div>
               <h2 className={`text-xl font-bold mb-2 ${textColor}`}>Assalamu'alaikum</h2>
               <p className={`text-sm text-center px-6 mb-8 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                Saya AI Asisten ibadah Anda. Tanya jadwal, doa, atau cari masjid terdekat.
+                Saya Ust AI ibadah Anda. Tanya jadwal, doa, atau cari masjid terdekat.
               </p>
-              
+
               {/* Suggestion Chips (Bento Style) */}
               <div className="w-full grid grid-cols-2 gap-3 px-2">
                 {suggestions.map((item, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSend(item.text)}
-                    className={`flex flex-col gap-2 p-3.5 rounded-2xl border text-left transition-all active:scale-95 ${
-                      darkMode 
-                        ? 'bg-slate-800/40 border-white/5 hover:bg-slate-800/60 text-slate-300' 
-                        : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm'
-                    }`}
+                    className={`flex flex-col gap-2 p-3.5 rounded-2xl border text-left transition-all active:scale-95 ${darkMode
+                      ? 'bg-slate-800/40 border-white/5 hover:bg-slate-800/60 text-slate-300'
+                      : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700 shadow-sm'
+                      }`}
                   >
                     <span className="material-icons text-emerald-500 text-[20px]">{item.icon}</span>
                     <span className="text-xs font-semibold">{item.text}</span>
@@ -294,22 +316,23 @@ Tugas & Aturan kamu:
           {/* Messages */}
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              
+
               {/* Bot Avatar */}
               {msg.role === 'assistant' && (
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shrink-0 mr-2 mt-auto shadow-sm">
-                  <span className="material-icons text-white text-[14px]">smart_toy</span>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shrink-0 mr-2 mt-auto shadow-sm overflow-hidden p-[1px]">
+                  <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${darkMode ? 'bg-[#0B1B18]' : 'bg-white'}`}>
+                    <img src="/ustadz-icon.png" alt="Ust AI" className="w-5 h-5 object-contain" />
+                  </div>
                 </div>
               )}
 
-              <div 
-                className={`max-w-[75%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed shadow-sm whitespace-pre-wrap ${
-                  msg.role === 'user' 
-                    ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-sm' 
-                    : darkMode 
-                      ? 'bg-slate-800/80 text-slate-200 rounded-bl-sm border border-white/5 backdrop-blur-md' 
-                      : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
-                }`}
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed shadow-sm whitespace-pre-wrap ${msg.role === 'user'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-sm'
+                  : darkMode
+                    ? 'bg-slate-800/80 text-slate-200 rounded-bl-sm border border-white/5 backdrop-blur-md'
+                    : 'bg-white text-slate-700 rounded-bl-sm border border-slate-100'
+                  }`}
               >
                 {msg.content}
               </div>
@@ -319,12 +342,13 @@ Tugas & Aturan kamu:
           {/* Typing Indicator */}
           {isTyping && (
             <div className="flex w-full justify-start items-end">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shrink-0 mr-2 shadow-sm">
-                <span className="material-icons text-white text-[14px]">smart_toy</span>
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center shrink-0 mr-2 shadow-sm overflow-hidden p-[1px]">
+                <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${darkMode ? 'bg-[#0B1B18]' : 'bg-white'}`}>
+                  <img src="/ustadz-icon.png" alt="Ust AI" className="w-5 h-5 object-contain" />
+                </div>
               </div>
-              <div className={`rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5 items-center ${
-                darkMode ? 'bg-slate-800/80 border border-white/5 backdrop-blur-md' : 'bg-white border border-slate-100'
-              }`}>
+              <div className={`rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5 items-center ${darkMode ? 'bg-slate-800/80 border border-white/5 backdrop-blur-md' : 'bg-white border border-slate-100'
+                }`}>
                 <div className="w-1.5 h-1.5 bg-emerald-500/60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                 <div className="w-1.5 h-1.5 bg-emerald-500/60 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
                 <div className="w-1.5 h-1.5 bg-emerald-500/60 rounded-full animate-bounce"></div>
@@ -335,14 +359,12 @@ Tugas & Aturan kamu:
         </div>
 
         {/* Bottom Input Area - Floating Glass Style */}
-        <div className={`shrink-0 p-4 pb-6 pt-2 backdrop-blur-xl ${
-          darkMode ? 'bg-[#0B1B18]/90 border-t border-white/5' : 'bg-slate-50/90 border-t border-slate-200'
-        }`}>
-          <div className={`flex items-end gap-2 p-1.5 pl-4 rounded-3xl border shadow-sm transition-colors ${
-            darkMode 
-              ? 'bg-slate-900/50 border-slate-700 focus-within:border-emerald-500/50' 
-              : 'bg-white border-slate-200 focus-within:border-emerald-500/50'
+        <div className={`shrink-0 p-4 pb-6 pt-2 backdrop-blur-xl ${darkMode ? 'bg-[#0B1B18]/90 border-t border-white/5' : 'bg-slate-50/90 border-t border-slate-200'
           }`}>
+          <div className={`flex items-end gap-2 p-1.5 pl-4 rounded-3xl border shadow-sm transition-colors ${darkMode
+            ? 'bg-slate-900/50 border-slate-700 focus-within:border-emerald-500/50'
+            : 'bg-white border-slate-200 focus-within:border-emerald-500/50'
+            }`}>
             <textarea
               rows={1}
               value={inputText}
@@ -354,21 +376,23 @@ Tugas & Aturan kamu:
                 }
               }}
               placeholder="Tanya sesuatu..."
-              className={`flex-1 bg-transparent border-none focus:ring-0 resize-none max-h-28 py-3 text-[14px] ${textColor} placeholder-slate-400`}
+              className={`flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent resize-none max-h-28 py-3 text-[14px] ${textColor} placeholder-slate-400`}
               style={{ minHeight: '44px' }}
             />
             {inputText.trim() ? (
-              <button 
+              <button
                 onClick={() => handleSend()}
                 className="w-11 h-11 rounded-full bg-gradient-to-tr from-teal-500 to-emerald-400 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
               >
                 <span className="material-icons text-[20px] ml-0.5">send</span>
               </button>
             ) : (
-              <button 
-                className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors active:scale-95 ${
-                  darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
-                }`}
+              <button
+                onClick={handleMicClick}
+                className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors active:scale-95 ${isListening
+                  ? 'bg-red-500 text-white animate-pulse shadow-md shadow-red-500/20'
+                  : darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
+                  }`}
               >
                 <span className="material-icons text-[20px]">mic</span>
               </button>

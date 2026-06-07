@@ -60,21 +60,6 @@
   },
   {
     "subscription": {
-      "endpoint": "https://fcm.googleapis.com/fcm/send/eW_GDeAkR44:APA91bHh25k31yFaI2b2K_a1ED_0qVtQxOKUiRKX_gCNJAZHZgUBffHQQ2Pzzt9KRhFX__z1Yp_KDrKyIPKFrOatiOCoXzDrUD1d83yKC3DUWI-RiPPtJqUKeM1yW20t1YAqaKjwQP6x",
-      "expirationTime": null,
-      "keys": {
-        "p256dh": "BJ5I4kTiuwnB4FsluCtXPv3ebGgr2S6Xw9mtrLv04X92l0MzlBbGkamNHKMTTZOEX535LXdbePGB1BbMYnMNhAk",
-        "auth": "wYnBuWuPHQGMqwmz33iWhQ"
-      }
-    },
-    "lat": -7.3101198,
-    "lng": 112.7498755,
-    "notificationsEnabled": true,
-    "imsakNotifEnabled": true,
-    "createdAt": "2026-05-31T11:15:26.412Z"
-  },
-  {
-    "subscription": {
       "endpoint": "https://fcm.googleapis.com/fcm/send/dLJdH2UfcHY:APA91bFmlDCWiKxPq46N-3whZQpAbUbwzQv83aK8ueud0F7HOkeaLVml0aslJ9VEnvWNDob6lpZd1m2liATLAU9sOr5KqoH_IwLssVVpbRb-KsEKy9SsVAA43fEEJPhpW13qWXIiuTDc",
       "expirationTime": null,
       "keys": {
@@ -85,7 +70,22 @@
     "lat": -7.2344,
     "lng": 112.6077,
     "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-06-06T14:01:11.605Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/eoFzvmFrO64:APA91bFodLvdKq_4IEb_YCJGAxfvMTLLftdtsPTy5iekrPx4Oe9pHU2fitAGgmt0EJjreFMP1Xr3Rvw_Neq7UkdAyosi4Klsr2-9fsJVeqH3eDLThpx-mMXMhYXdFqjhzB0ISp5rMY3m",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BH2_Hsy_QUT2b06lksUmRfEsQtOuslk3p4bgGZ4amhVX1Croudmk5gF9TFPsORQsWuwEbCYmF0KBDED-guqt35M",
+        "auth": "mfF9w_BQbwTT5Mmd7rmZGw"
+      }
+    },
+    "lat": -6.2088,
+    "lng": 106.8456,
+    "notificationsEnabled": true,
     "imsakNotifEnabled": false,
-    "createdAt": "2026-05-31T01:40:57.526Z"
+    "createdAt": "2026-05-31T16:01:58.034Z"
   }
 ]

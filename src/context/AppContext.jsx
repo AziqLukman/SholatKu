@@ -11,7 +11,7 @@ export function AppProvider({ children }) {
   // Dark mode
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('sholatku-darkmode')
-    return saved !== null ? JSON.parse(saved) : true
+    return saved !== null ? JSON.parse(saved) : false
   })
 
   // Active tab

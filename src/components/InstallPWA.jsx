@@ -28,13 +28,34 @@ export default function InstallPWA() {
     if (/android/.test(userAgent)) setPlatform('android')
     else setPlatform('desktop')
 
+    const hasDismissed = localStorage.getItem('sholatku-install-dismissed')
+    const now = Date.now()
+    const shouldAutoShow = !hasDismissed || (now - parseInt(hasDismissed)) > 86400000 // 24 hours
+
+    const showInstallPrompt = () => {
+      setDeferredPrompt(window.deferredPWAInstallPrompt)
+      if (shouldAutoShow) {
+        setShowPrompt(true)
+      }
+    }
+
+    if (window.deferredPWAInstallPrompt) {
+      showInstallPrompt()
+    }
+
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault()
-      setDeferredPrompt(e)
-      setShowPrompt(true)
+      window.deferredPWAInstallPrompt = e
+      showInstallPrompt()
     }
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('pwa-ready-to-install', showInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('pwa-ready-to-install', showInstallPrompt)
+    }
   }, [])
 
   const handleInstallClick = async () => {
@@ -42,10 +63,14 @@ export default function InstallPWA() {
     deferredPrompt.prompt()
     await deferredPrompt.userChoice
     setDeferredPrompt(null)
+    window.deferredPWAInstallPrompt = null
     setShowPrompt(false)
   }
 
-  const handleDismiss = () => setShowPrompt(false)
+  const handleDismiss = () => {
+    localStorage.setItem('sholatku-install-dismissed', Date.now().toString())
+    setShowPrompt(false)
+  }
 
   if (!showPrompt) return null
 

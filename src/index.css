@@ -186,7 +186,8 @@ body {
    Scrollbar
    ============================================ */
 ::-webkit-scrollbar {
-  width: 6px;
+  display: none;
+  width: 0px;
 }
 
 ::-webkit-scrollbar-track {
@@ -194,12 +195,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(13, 150, 139, 0.3);
-  border-radius: 3px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(13, 150, 139, 0.5);
+  background: transparent;
 }
 
 /* Hide scrollbar utility */

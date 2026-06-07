@@ -21,6 +21,51 @@ export default function Setelan() {
   const [searching, setSearching] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(true) // Default true to avoid flash
+  const [platform, setPlatform] = useState('desktop')
+  const [showIosGuide, setShowIosGuide] = useState(false)
+
+  React.useEffect(() => {
+    const isInstalledLocally = localStorage.getItem('sholatku-installed') === 'true'
+    const checkStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                            window.navigator.standalone ||
+                            document.referrer.includes('android-app://')
+
+    setIsStandalone(checkStandalone || isInstalledLocally)
+
+    // Jika prompt sudah ada sejak awal (berarti belum diinstall)
+    if (window.deferredPWAInstallPrompt) {
+      setIsStandalone(false)
+      localStorage.removeItem('sholatku-installed')
+    }
+
+    const onInstalled = () => {
+      setIsStandalone(true)
+      localStorage.setItem('sholatku-installed', 'true')
+    }
+    
+    const onReadyToInstall = () => {
+      setIsStandalone(false)
+      localStorage.removeItem('sholatku-installed')
+    }
+
+    window.addEventListener('appinstalled', onInstalled)
+    window.addEventListener('pwa-installed', onInstalled)
+    window.addEventListener('pwa-ready-to-install', onReadyToInstall)
+
+    const userAgent = window.navigator.userAgent.toLowerCase()
+    if (/iphone|ipad|ipod/.test(userAgent)) {
+      setPlatform('ios')
+    } else if (/android/.test(userAgent)) {
+      setPlatform('android')
+    }
+
+    return () => {
+      window.removeEventListener('appinstalled', onInstalled)
+      window.removeEventListener('pwa-installed', onInstalled)
+      window.removeEventListener('pwa-ready-to-install', onReadyToInstall)
+    }
+  }, [])
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
@@ -98,6 +143,31 @@ export default function Setelan() {
       )
     } else {
       alert('Izin notifikasi ditolak. Aktifkan di pengaturan browser.')
+    }
+  }
+
+  const handleInstallClick = async () => {
+    if (platform === 'ios') {
+      setShowIosGuide(true)
+      return
+    }
+    
+    const prompt = window.deferredPWAInstallPrompt;
+    if (!prompt) {
+      alert("Browser kamu tidak mendukung instalasi langsung atau aplikasi sudah diinstall.")
+      return
+    }
+    
+    try {
+      prompt.prompt()
+      const { outcome } = await prompt.userChoice
+      if (outcome === 'accepted') {
+        setIsStandalone(true)
+        localStorage.setItem('sholatku-installed', 'true')
+      }
+      window.deferredPWAInstallPrompt = null
+    } catch(e) {
+      console.error(e)
     }
   }
 
@@ -432,6 +502,36 @@ export default function Setelan() {
         </div>
       </div>
 
+      {/* Install Aplikasi */}
+      {!isStandalone && (
+        <div>
+          <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Install Aplikasi</h3>
+          <div className={`rounded-2xl border transition-all overflow-hidden ${darkMode ? 'glass-clay-dark border-blue-500/20' : 'glass-clay-light border-blue-200'}`}>
+            <button
+              onClick={handleInstallClick}
+              className={`w-full flex items-center justify-between p-4 transition-all text-left bento-card-hover ${
+                darkMode ? 'hover:bg-white/5 bg-gradient-to-r from-blue-500/10 to-transparent' : 'hover:bg-blue-50/50 bg-gradient-to-r from-blue-50/80 to-transparent'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+                }`}>
+                  <span className="material-icons text-[20px]">{platform === 'ios' ? 'ios_share' : 'install_mobile'}</span>
+                </div>
+                <div>
+                  <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Install ke Layar Utama</span>
+                  <span className={`text-[11px] font-medium block mt-0.5 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Akses lebih cepat & mode layar penuh</span>
+                </div>
+              </div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                <span className="material-icons text-[20px]">chevron_right</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Tentang */}
       <div>
         <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Aplikasi</h3>
@@ -449,7 +549,7 @@ export default function Setelan() {
                 <span className="material-icons text-[20px]">info</span>
               </div>
               <div>
-                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Versi 1.8.0</span>
+                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Versi 2.0</span>
                 <span className={`text-[11px] font-medium block mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Lihat apa yang baru (Changelog)</span>
               </div>
             </div>
@@ -462,12 +562,52 @@ export default function Setelan() {
       
       {/* Footer text */}
       <div className={`text-center text-[10px] font-medium space-y-1 pb-4 pt-2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-        <p>SholatKu v1.8.0 — Jadwal Sholat by Ajekkk</p>
+        <p>SholatKu v2.0 — Jadwal Sholat by Ajekkk</p>
         <p>Data dari <a href="https://equran.id" target="_blank" rel="noopener noreferrer" className={`hover:underline font-bold ${darkMode ? 'text-primary/70' : 'text-primary'}`}>EQuran.id</a> (Kemenag RI)</p>
       </div>
 
       {/* Modal Changelog Popup */}
       {showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
+
+      {/* iOS Install Guide Popup */}
+      {showIosGuide && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center px-4 pb-6 sm:items-center sm:pb-0 animate-fade-in">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowIosGuide(false)}></div>
+          <div className={`relative rounded-2xl shadow-2xl sm:w-full sm:max-w-md animate-slide-up border ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+            <div className="absolute top-3 right-3">
+              <button onClick={() => setShowIosGuide(false)} className={`rounded-full p-1 transition-colors ${darkMode ? 'text-slate-400 hover:bg-slate-700' : 'text-slate-400 hover:bg-slate-100'}`}>
+                <span className="material-icons text-xl">close</span>
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <span className="material-icons text-2xl">ios_share</span>
+                </div>
+                <div>
+                  <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Install di iOS</h3>
+                  <p className={`mt-1 text-sm leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Tambahkan SholatKu ke layar utama untuk akses cepat dan layar penuh.
+                  </p>
+                </div>
+              </div>
+              <div className={`mt-6 rounded-xl p-4 border ${darkMode ? 'bg-slate-700/50 border-slate-600' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="space-y-3">
+                  <div className={`flex items-center gap-3 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${darkMode ? 'bg-slate-600' : 'bg-slate-200'}`}>1</span>
+                    <span>Tekan tombol <strong>Share</strong> <span className="material-icons text-sm align-middle mx-1">ios_share</span> di bar Safari</span>
+                  </div>
+                  <div className={`h-px ${darkMode ? 'bg-slate-600/50' : 'bg-slate-200/60'}`}></div>
+                  <div className={`flex items-center gap-3 text-sm ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${darkMode ? 'bg-slate-600' : 'bg-slate-200'}`}>2</span>
+                    <span>Pilih <strong>Add to Home Screen</strong> <span className="material-icons text-sm align-middle mx-1">add_box</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

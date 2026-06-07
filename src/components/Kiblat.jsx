@@ -13,14 +13,25 @@ export default function Kiblat() {
   const qiblaAngle = calculateQiblaDirection(location.lat, location.lng)
   const distance = calculateDistanceToKaabah(location.lat, location.lng)
 
+  const isAbsoluteRef = useRef(false)
+
   useEffect(() => {
     const handleOrientation = (e) => {
       let rawHeading = null
+      
+      if (e.type === 'deviceorientationabsolute') {
+        isAbsoluteRef.current = true
+      }
+      
+      if (e.type === 'deviceorientation' && isAbsoluteRef.current && e.webkitCompassHeading === undefined) {
+        // Abaikan deviceorientation relatif di Android jika absolute tersedia
+        return
+      }
+
       if (e.webkitCompassHeading !== undefined) {
-        rawHeading = e.webkitCompassHeading
+        rawHeading = e.webkitCompassHeading // iOS
       } else if (e.alpha !== null) {
-        // Android: alpha is counterclockwise from north
-        rawHeading = 360 - e.alpha
+        rawHeading = 360 - e.alpha // Android
       }
 
       if (rawHeading !== null) {
@@ -40,11 +51,17 @@ export default function Kiblat() {
 
     if (window.DeviceOrientationEvent) {
       if (typeof window.DeviceOrientationEvent.requestPermission !== 'function') {
+        if ('ondeviceorientationabsolute' in window) {
+          window.addEventListener('deviceorientationabsolute', handleOrientation, true)
+        }
         window.addEventListener('deviceorientation', handleOrientation, true)
       }
     }
 
     return () => {
+      if ('ondeviceorientationabsolute' in window) {
+        window.removeEventListener('deviceorientationabsolute', handleOrientation, true)
+      }
       window.removeEventListener('deviceorientation', handleOrientation, true)
     }
   }, [])
@@ -54,8 +71,16 @@ export default function Kiblat() {
       try {
         const permission = await DeviceOrientationEvent.requestPermission()
         if (permission === 'granted') {
-          window.addEventListener('deviceorientation', (e) => {
+          const handleOrientationWithPermission = (e) => {
             let rawHeading = null
+            
+            if (e.type === 'deviceorientationabsolute') {
+              isAbsoluteRef.current = true
+            }
+            if (e.type === 'deviceorientation' && isAbsoluteRef.current && e.webkitCompassHeading === undefined) {
+              return
+            }
+
             if (e.webkitCompassHeading !== undefined) {
               rawHeading = e.webkitCompassHeading
             } else if (e.alpha !== null) {
@@ -74,7 +99,12 @@ export default function Kiblat() {
               lastHeadingRef.current = rawHeading
               setDisplayHeading(continuousHeadingRef.current)
             }
-          }, true)
+          }
+
+          if ('ondeviceorientationabsolute' in window) {
+            window.addEventListener('deviceorientationabsolute', handleOrientationWithPermission, true)
+          }
+          window.addEventListener('deviceorientation', handleOrientationWithPermission, true)
         }
       } catch {}
     }

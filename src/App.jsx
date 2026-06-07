@@ -88,6 +88,21 @@ function AppContent() {
     }
   }, [prayerTimes, notificationsEnabled, imsakNotifEnabled, location])
 
+  // Dynamic Theme Color for Notification Bar
+  useEffect(() => {
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (!metaThemeColor) {
+      metaThemeColor = document.createElement('meta');
+      metaThemeColor.name = 'theme-color';
+      document.head.appendChild(metaThemeColor);
+    }
+    const color = darkMode ? '#0B1B18' : '#d8ede8';
+    metaThemeColor.setAttribute('content', color);
+    
+    // Ensure body background matches to avoid lines at the safe area inset if any
+    document.body.style.backgroundColor = color;
+  }, [darkMode])
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
@@ -122,7 +137,7 @@ function AppContent() {
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
       <div className={`font-sans min-h-screen flex overflow-hidden dark-transition ${
-        darkMode ? 'bg-[#0B1B18] text-slate-100' : 'bg-[#fafafa] text-slate-800'
+        darkMode ? 'bg-[#0B1B18] text-slate-100' : 'bg-gradient-to-b from-[#d8ede8] via-[#ebf5f3] to-[#fafafa] text-slate-800'
       }`}>
 
         {/* Motif Islami */}
@@ -150,7 +165,13 @@ function AppContent() {
         <Sidebar />
 
         {/* Konten Utama */}
-        <main className="flex-1 relative z-10 overflow-y-auto h-screen p-4 lg:p-8 pb-32 lg:pb-8">
+        <main 
+          className="flex-1 relative z-10 overflow-y-auto h-screen p-4 lg:p-8"
+          style={{ 
+            paddingTop: 'max(env(safe-area-inset-top), 1rem)',
+            paddingBottom: 'max(env(safe-area-inset-bottom), 8rem)'
+          }}
+        >
 
           <div className="max-w-4xl mx-auto">
             {loading ? (

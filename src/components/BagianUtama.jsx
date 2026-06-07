@@ -21,11 +21,11 @@ const POPULAR_CITIES = [
 ]
 
 export default function BagianUtama() {
-  const { 
-    prayerTimes, hijriDate, location, setLocation, 
-    darkMode, setActiveTab, 
+  const {
+    prayerTimes, hijriDate, location, setLocation,
+    darkMode, setActiveTab,
     notificationsEnabled, setNotificationsEnabled,
-    setAiOpen 
+    setAiOpen
   } = useApp()
 
   // Hitung target offset zona waktu secara cerdas & global (WIB=7, WITA=8, WIT=9, Malaysia/Singapura=8, dll)
@@ -42,7 +42,7 @@ export default function BagianUtama() {
     // Koreksi administratif khusus wilayah Indonesia
     if (name.includes('papua') || name.includes('maluku')) return 9
     if (name.includes('sulawesi') || name.includes('bali') || name.includes('tenggara') || name.includes('nusa') || name.includes('gorontalo') || name.includes('makassar') || name.includes('denpasar')) return 8
-    
+
     // Fallback berdasarkan batas bujur geografis administratif Indonesia
     if (lng >= 124.5 && lng <= 142.5) return 9
     if (lng >= 114.0 && lng < 124.5) return 8
@@ -82,9 +82,9 @@ export default function BagianUtama() {
   const handleSearch = async () => {
     if (!searchQuery.trim()) return
     setSearching(true)
-    
+
     // Local fallback database filter
-    const localMatches = POPULAR_CITIES.filter(c => 
+    const localMatches = POPULAR_CITIES.filter(c =>
       c.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.provinsi.toLowerCase().includes(searchQuery.toLowerCase())
     )
@@ -94,7 +94,7 @@ export default function BagianUtama() {
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(searchQuery)}&format=json&limit=5&accept-language=id&addressdetails=1`
       )
       const data = await res.json()
-      
+
       if (!Array.isArray(data) || data.length === 0) {
         setSearchResults(localMatches)
         setSearching(false)
@@ -181,7 +181,7 @@ export default function BagianUtama() {
 
   // Bento Grid features
   const features = [
-    { id: 'ai', label: 'Tanya AI', icon: 'smart_toy', color: 'bg-purple-500/20 text-purple-600 dark:text-purple-300 border-purple-500/30', action: () => setAiOpen('full') },
+    { id: 'ai', label: 'Ust AI', imgSrc: '/ustadz-icon.png', color: 'bg-purple-500/20 text-purple-600 dark:text-purple-300 border-purple-500/30', action: () => setAiOpen('full') },
     { id: 'tasbih', label: 'Tasbih', icon: 'ads_click', color: 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/30', action: () => setActiveTab('tasbih') },
     { id: 'doa', label: 'Doa', icon: 'volunteer_activism', color: 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border-rose-500/30', action: () => setActiveTab('doa') },
     { id: 'masjid', label: 'Masjid', icon: 'mosque', color: 'bg-sky-500/20 text-sky-600 dark:text-sky-300 border-sky-500/30', action: () => setActiveTab('mosque') },
@@ -193,7 +193,7 @@ export default function BagianUtama() {
 
   return (
     <div className="space-y-6 animate-fade-in font-sans">
-      
+
       {/* 2. DUAL-CALENDAR TOP APP BAR */}
       <header className="flex items-center justify-between">
         <div className="flex flex-col">
@@ -205,17 +205,16 @@ export default function BagianUtama() {
           </span>
         </div>
 
-        <button 
+        <button
           onClick={() => {
             setSearchQuery('')
             setSearchResults([])
             setShowLocModal(true)
           }}
-          className={`h-8 px-3 flex items-center gap-1.5 rounded-full border border-opacity-30 transition-all duration-300 active:scale-95 text-[11px] font-semibold tracking-wide cursor-pointer ${
-            darkMode 
-              ? 'border-slate-500 text-slate-300 hover:bg-white/5' 
+          className={`h-8 px-3 flex items-center gap-1.5 rounded-full border border-opacity-30 transition-all duration-300 active:scale-95 text-[11px] font-semibold tracking-wide cursor-pointer ${darkMode
+              ? 'border-slate-500 text-slate-300 hover:bg-white/5'
               : 'border-slate-300 text-slate-600 hover:bg-slate-100 shadow-sm'
-          }`}
+            }`}
         >
           <span>📍 {location.city || 'Jakarta'}</span>
           <span className="material-icons text-[14px] ml-1 opacity-70">expand_more</span>
@@ -230,12 +229,11 @@ export default function BagianUtama() {
             <div className={`font-sans text-3xl font-bold tracking-tight leading-none ${darkMode ? 'text-white' : 'text-slate-900'}`}>
               {currentPrayer?.name?.toUpperCase() || 'SUBUH'} - {currentPrayer?.time || '--:--'}
             </div>
-            
+
             {/* Countdown Golden Badge */}
             {nextPrayer && (
-              <div className={`mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border ${
-                darkMode ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-amber-50/80 text-amber-600 border-amber-200/50'
-              }`}>
+              <div className={`mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border ${darkMode ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-amber-50/80 text-amber-600 border-amber-200/50'
+                }`}>
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                 <span>Next: {nextPrayer.name} in {countdown || '--:--:--'}</span>
               </div>
@@ -245,11 +243,10 @@ export default function BagianUtama() {
           {/* Sisi Kanan: Jam Analog & Digital Clock Dinamis (UI/UX Pro Max Edition) */}
           <div className="flex flex-col items-center gap-1.5 shrink-0 select-none">
             {/* Analog Clock Circle */}
-            <div className={`w-20 h-20 shrink-0 flex items-center justify-center rounded-full transition-all duration-500 hover:scale-105 active:scale-95 ${
-              darkMode 
-                ? 'bg-[#0d968b]/10 shadow-none' 
+            <div className={`w-20 h-20 shrink-0 flex items-center justify-center rounded-full transition-all duration-500 hover:scale-105 active:scale-95 ${darkMode
+                ? 'bg-[#0d968b]/10 shadow-none'
                 : 'bg-[#0d968b]/05 shadow-none'
-            }`}>
+              }`}>
               <svg className="w-full h-full" viewBox="0 0 64 64">
                 <defs>
                   {/* 3D Glass Refraction Gradient - Toska Tint */}
@@ -262,7 +259,7 @@ export default function BagianUtama() {
 
                 {/* Glass Dial Face (Hanya satu garis lingkaran halus via SVG stroke untuk kebersihan mutlak) */}
                 <circle cx="32" cy="32" r="30.5" fill="url(#clock-glass-refract)" stroke={darkMode ? 'rgba(13,150,139,0.35)' : 'rgba(13,150,139,0.2)'} strokeWidth="0.8" />
-                
+
                 {/* Hour Numbers (12, 3, 6, 9 seimbang di posisi radius 22) */}
                 <text x="32" y="11" textAnchor="middle" dominantBaseline="middle" className={`text-[8.5px] font-black tracking-tighter ${darkMode ? 'fill-emerald-100' : 'fill-emerald-950'}`}>12</text>
                 <text x="53" y="32" textAnchor="middle" dominantBaseline="middle" className={`text-[8.5px] font-black tracking-tighter ${darkMode ? 'fill-emerald-100' : 'fill-emerald-950'}`}>3</text>
@@ -285,26 +282,26 @@ export default function BagianUtama() {
                 <circle cx="20.5" cy="12" r="0.8" className={darkMode ? 'fill-emerald-300/60' : 'fill-emerald-900/50'} />
 
                 {/* Hour Hand (Elegant dark bar) */}
-                <line 
-                  x1="32" y1="32" x2="32" y2="21" 
+                <line
+                  x1="32" y1="32" x2="32" y2="21"
                   stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
                   className={darkMode ? 'text-white' : 'text-slate-900'}
                   transform={`rotate(${hourDeg} 32 32)`}
                 />
-                
+
                 {/* Minute Hand (Primary toska accent, thin) */}
-                <line 
-                  x1="32" y1="32" x2="32" y2="14" 
+                <line
+                  x1="32" y1="32" x2="32" y2="14"
                   stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"
                   className={darkMode ? 'text-emerald-300' : 'text-[#0a726a]'}
                   transform={`rotate(${minDeg} 32 32)`}
                 />
-                
+
                 {/* Second Hand (Swiss style with counterweight tail) */}
                 <g transform={`rotate(${secDeg} 32 32)`}>
                   {/* Main Pointer */}
-                  <line 
-                    x1="32" y1="38" x2="32" y2="9" 
+                  <line
+                    x1="32" y1="38" x2="32" y2="9"
                     stroke="#ff4b4b" strokeWidth="0.65" strokeLinecap="round"
                   />
                   {/* Counterweight Tail Dot */}
@@ -317,11 +314,10 @@ export default function BagianUtama() {
             </div>
 
             {/* Digital Clock (Pukul HH:MM) */}
-            <div className={`text-[10px] font-black tracking-widest px-2 py-0.5 rounded-full border shadow-sm transition-all duration-300 ${
-              darkMode 
-                ? 'bg-emerald-950/45 text-emerald-300 border-emerald-900/30' 
+            <div className={`text-[10px] font-black tracking-widest px-2 py-0.5 rounded-full border shadow-sm transition-all duration-300 ${darkMode
+                ? 'bg-emerald-950/45 text-emerald-300 border-emerald-900/30'
                 : 'bg-emerald-50/80 text-emerald-800 border-emerald-200/50 shadow-[0_2px_8px_rgba(13,150,139,0.05)]'
-            }`}>
+              }`}>
               {formattedTime || '--:--'}
             </div>
           </div>
@@ -329,10 +325,10 @@ export default function BagianUtama() {
 
         {/* Bottom Action Buttons */}
         <div className="grid grid-cols-2 gap-3 mt-1">
-          <button 
+          <button
             onClick={async () => {
               const { requestNotificationPermission, initAdzanAudio } = await import('../utils/notifications')
-              
+
               // Unlock browser audio autoplay policy
               initAdzanAudio()
 
@@ -343,20 +339,18 @@ export default function BagianUtama() {
                 setNotificationsEnabled(false)
               }
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-semibold transition-all duration-300 ${
-              darkMode 
-                ? notificationsEnabled ? 'bg-primary/20 text-primary border-primary/30 hover:bg-primary/30' : 'bg-white/5 hover:bg-white/10 text-slate-400 border border-white/10' 
+            className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-semibold transition-all duration-300 ${darkMode
+                ? notificationsEnabled ? 'bg-primary/20 text-primary border-primary/30 hover:bg-primary/30' : 'bg-white/5 hover:bg-white/10 text-slate-400 border border-white/10'
                 : notificationsEnabled ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20' : 'bg-white/60 hover:bg-white shadow-sm text-slate-500 border border-slate-200/50'
-            }`}
+              }`}
           >
             <span className="material-icons text-[16px] opacity-80">
               {notificationsEnabled ? 'volume_up' : 'volume_off'}
             </span>
             {notificationsEnabled ? 'Adzan Aktif' : 'Adzan Mati'}
           </button>
-          <button onClick={() => setActiveTab('qibla')} className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-semibold transition-all duration-300 ${
-            darkMode ? 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10' : 'bg-white/60 hover:bg-white shadow-sm text-slate-700 border border-slate-200/50'
-          }`}>
+          <button onClick={() => setActiveTab('qibla')} className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-semibold transition-all duration-300 ${darkMode ? 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10' : 'bg-white/60 hover:bg-white shadow-sm text-slate-700 border border-slate-200/50'
+            }`}>
             <span className="material-icons text-[16px] opacity-80">explore</span>
             Arah Kiblat
           </button>
@@ -364,9 +358,8 @@ export default function BagianUtama() {
       </section>
 
       {/* 4. TIMELINE SHOLAT (SOFT HORIZONTAL PATH) */}
-      <section className={`w-full py-4 px-2 relative flex items-center justify-between ${
-        darkMode ? 'elegant-card-dark' : 'elegant-card-light'
-      }`}>
+      <section className={`w-full py-4 px-2 relative flex items-center justify-between ${darkMode ? 'elegant-card-dark' : 'elegant-card-light'
+        }`}>
         {timelinePrayers.map((prayer, i) => {
           const isActive = currentPrayer?.name === prayer.name
           const isNext = nextPrayer?.name === prayer.name
@@ -374,17 +367,15 @@ export default function BagianUtama() {
 
           return (
             <div key={prayer.name} className="flex flex-col items-center flex-1 relative z-10">
-              <div className={`text-[9px] uppercase tracking-wider font-bold mb-0.5 ${
-                isActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-slate-500' : 'text-slate-400')
-              }`}>
+              <div className={`text-[9px] uppercase tracking-wider font-bold mb-0.5 ${isActive ? (darkMode ? 'text-emerald-400' : 'text-emerald-600') : (darkMode ? 'text-slate-500' : 'text-slate-400')
+                }`}>
                 {prayer.name}
               </div>
-              <div className={`text-[12px] font-medium transition-colors duration-300 ${
-                isActive ? (darkMode ? 'text-emerald-300' : 'text-emerald-700') : (darkMode ? 'text-slate-300' : 'text-slate-600')
-              }`}>
+              <div className={`text-[12px] font-medium transition-colors duration-300 ${isActive ? (darkMode ? 'text-emerald-300' : 'text-emerald-700') : (darkMode ? 'text-slate-300' : 'text-slate-600')
+                }`}>
                 {prayer.time}
               </div>
-              
+
               {isActive && (
                 <div className="absolute inset-0 border border-emerald-400/30 rounded-full scale-125 animate-pulse pointer-events-none"></div>
               )}
@@ -396,22 +387,24 @@ export default function BagianUtama() {
       {/* 5. MENU FITUR: ELEGANT FLOATING ICONS */}
       <section className="grid grid-cols-4 gap-y-6 gap-x-2 px-2 mt-2">
         {features.map((feature) => (
-          <button 
+          <button
             key={feature.id}
             onClick={feature.action}
             className={`flex flex-col items-center gap-2 group focus:outline-none`}
           >
             {/* Elegant Circular Icon Box */}
-            <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${feature.color} ${
-              darkMode ? 'bg-opacity-20 hover:bg-opacity-30 backdrop-blur-md border border-white/5' : 'bg-opacity-80 hover:bg-opacity-100 backdrop-blur-xl border border-white/60'
-            }`}>
-              <span className="material-icons text-[24px]">{feature.icon}</span>
+            <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${feature.color} ${darkMode ? 'bg-opacity-20 hover:bg-opacity-30 backdrop-blur-md border border-white/5' : 'bg-opacity-80 hover:bg-opacity-100 backdrop-blur-xl border border-white/60'
+              }`}>
+              {feature.imgSrc ? (
+                <img src={feature.imgSrc} alt={feature.label} className="w-[28px] h-[28px] object-contain rounded-full" />
+              ) : (
+                <span className="material-icons text-[24px]">{feature.icon}</span>
+              )}
             </div>
-            
+
             {/* Label */}
-            <span className={`text-[10.5px] font-medium tracking-wide ${
-              darkMode ? 'text-slate-300' : 'text-slate-700'
-            }`}>
+            <span className={`text-[10.5px] font-medium tracking-wide ${darkMode ? 'text-slate-300' : 'text-slate-700'
+              }`}>
               {feature.label}
             </span>
           </button>
@@ -419,12 +412,10 @@ export default function BagianUtama() {
       </section>
 
       {/* 6. WISDOM QUOTE */}
-      <section className={`p-5 flex gap-4 items-start select-none transition-all duration-300 islamic-watermark ${
-        darkMode ? 'elegant-card-dark' : 'elegant-card-light'
-      }`}>
-        <span className={`p-2 rounded-full text-lg leading-none flex items-center justify-center shrink-0 ${
-          darkMode ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-50/80 text-amber-500'
-        }`}>✨</span>
+      <section className={`p-5 flex gap-4 items-start select-none transition-all duration-300 islamic-watermark ${darkMode ? 'elegant-card-dark' : 'elegant-card-light'
+        }`}>
+        <span className={`p-2 rounded-full text-lg leading-none flex items-center justify-center shrink-0 ${darkMode ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-50/80 text-amber-500'
+          }`}>✨</span>
         <div className="space-y-2">
           <p className={`text-[12px] font-semibold tracking-wide ${darkMode ? 'text-slate-200' : 'text-slate-700'}`}>
             Keutamaan Sholat
@@ -444,22 +435,21 @@ export default function BagianUtama() {
       {/* ── LOKASI MODAL / BOTTOM SHEET ──────────────── */}
       {showLocModal && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-4">
-          <div 
+          <div
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-fade-in"
             onClick={() => setShowLocModal(false)}
           ></div>
-          
-          <div className={`relative w-full max-w-lg h-[70vh] sm:h-[50vh] flex flex-col sm:rounded-[3rem] rounded-t-[2.5rem] p-6 shadow-2xl transition-transform animate-slide-up ${
-            darkMode ? 'bg-[#0f211f]/95 border border-emerald-900/30' : 'bg-white/95 border border-slate-200'
-          }`}>
+
+          <div className={`relative w-full max-w-lg h-[70vh] sm:h-[50vh] flex flex-col sm:rounded-[3rem] rounded-t-[2.5rem] p-6 shadow-2xl transition-transform animate-slide-up ${darkMode ? 'bg-[#0f211f]/95 border border-emerald-900/30' : 'bg-white/95 border border-slate-200'
+            }`}>
             <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-6 sm:hidden"></div>
-            
+
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="material-icons text-primary">location_on</span>
                 <h3 className={`text-lg font-black ${darkMode ? 'text-white' : 'text-slate-800'}`}>Pilih Lokasi</h3>
               </div>
-              <button 
+              <button
                 onClick={() => setShowLocModal(false)}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${darkMode ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-100 text-slate-500 hover:text-slate-900'}`}
               >
@@ -474,9 +464,8 @@ export default function BagianUtama() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${
-                  darkMode ? 'bg-slate-900/60 text-white placeholder:text-slate-500 border border-white/5' : 'bg-white text-slate-800 placeholder:text-slate-400 border border-slate-200'
-                }`}
+                className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${darkMode ? 'bg-slate-900/60 text-white placeholder:text-slate-500 border border-white/5' : 'bg-white text-slate-800 placeholder:text-slate-400 border border-slate-200'
+                  }`}
               />
               <button
                 onClick={handleSearch}
@@ -496,11 +485,10 @@ export default function BagianUtama() {
                       <button
                         key={i}
                         onClick={() => selectLocation(c)}
-                        className={`p-3 rounded-xl text-left border transition-all active:scale-95 flex items-center gap-2.5 ${
-                          darkMode 
-                            ? 'bg-slate-800/25 border-slate-700/50 hover:bg-primary/20 hover:border-primary/30 text-slate-200' 
+                        className={`p-3 rounded-xl text-left border transition-all active:scale-95 flex items-center gap-2.5 ${darkMode
+                            ? 'bg-slate-800/25 border-slate-700/50 hover:bg-primary/20 hover:border-primary/30 text-slate-200'
                             : 'bg-slate-50 border-slate-200 hover:bg-primary/10 hover:border-primary/20 text-slate-700 shadow-sm'
-                        }`}
+                          }`}
                       >
                         <span className="material-icons text-[16px] text-primary">place</span>
                         <span className="text-xs font-bold truncate">{c.city}</span>
@@ -513,9 +501,8 @@ export default function BagianUtama() {
                   <button
                     key={i}
                     onClick={() => selectLocation(r)}
-                    className={`w-full text-left p-3.5 rounded-2xl transition-all flex items-center gap-3 bento-card-hover ${
-                      darkMode ? 'bg-slate-800/40 hover:bg-primary/20 border border-slate-700/50' : 'bg-slate-50 hover:bg-primary/10 border border-slate-200'
-                    }`}
+                    className={`w-full text-left p-3.5 rounded-2xl transition-all flex items-center gap-3 bento-card-hover ${darkMode ? 'bg-slate-800/40 hover:bg-primary/20 border border-slate-700/50' : 'bg-slate-50 hover:bg-primary/10 border border-slate-200'
+                      }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${darkMode ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
                       <span className="material-icons text-[16px]">place</span>
