@@ -315,7 +315,7 @@ export default function Doa() {
             </h2>
 
             {/* Arabic preview (1 baris, elipsis) */}
-            <p className="text-right text-xl leading-relaxed font-serif text-white/80 truncate mt-2 mb-4" dir="rtl" lang="ar">
+            <p className="text-right text-xl leading-relaxed font-arabic text-white/80 truncate mt-2 mb-4" dir="rtl" lang="ar">
               {doaOfTheDay.arabic}
             </p>
 
@@ -750,7 +750,7 @@ export default function Doa() {
               darkMode ? 'bg-black/30' : 'bg-slate-50 border border-slate-100'
             }`}>
               <p
-                className={`text-center leading-[2.4] font-serif ${darkMode ? 'text-white' : 'text-slate-800'}`}
+                className={`text-center leading-[2.4] font-arabic ${darkMode ? 'text-white' : 'text-slate-800'}`}
                 dir="rtl"
                 lang="ar"
                 style={{ fontSize: `${arabicFontSize}rem` }}

@@ -4,9 +4,48 @@ import { useApp } from '../context/AppContext'
 
 const changelogData = [
   {
+    version: '2.1',
+    date: '13 Juni 2026',
+    isNew: true,
+    items: [
+      {
+        title: 'Navigasi Cerdas: Juz & Hafalan 🧭',
+        description: 'Tampilan utama Al-Qur\'an kini dilengkapi 3 tab menu baru: Surat, Juz, dan Hafalan. Anda bisa langsung melompat ke Juz berapapun tanpa loading, atau memfilter khusus surat-surat yang sedang Anda hafal.'
+      },
+      {
+        title: 'Jump Modal Interaktif ⚡',
+        description: 'Saat membaca ayat, kini terdapat ikon Search 🔍 di menu atas. Klik untuk membuka kontrol interaktif yang memungkinkan Anda mencari ayat spesifik, pindah surat, atau melompat ke Juz lain tanpa harus kembali ke halaman utama.'
+      },
+      {
+        title: 'Tampilan Al-Qur\'an Lebih Fleksibel 📖',
+        description: 'Sekarang Anda bisa menampilkan atau menyembunyikan teks Transliterasi (Latin) dan Terjemahan secara langsung melalui tombol toggle di navigasi atas. Tampilan jadi lebih bersih dan fokus!'
+      },
+      {
+        title: 'Dukung SholatKu via QRIS ☕',
+        description: 'Kini Anda dapat mendukung pengembangan aplikasi ini langsung dari menu Setelan! Tersedia barcode QRIS bebas potongan untuk mentraktir kopi developer.'
+      },
+      {
+        title: 'Metode Hafalan Al-Hufaz 🧠',
+        description: 'Tingkatkan hafalan Al-Qur\'an Anda dengan metode Al-Hufaz! Fitur baru ini membagi ayat dalam 5 blok warna, dilengkapi counter repetisi target 40x per blok yang tersinkronisasi otomatis ke akun, serta fitur "Petunjuk Ayat" untuk melatih memori transisi.'
+      },
+      {
+        title: 'Panduan & Identifikasi Tajwid Warna 📖',
+        description: 'Menambahkan fitur visualisasi hukum tajwid (Idgham, Ikhfa, Qalqalah, dll) pada tiap ayat dengan tampilan tag kapsul warna-warni yang rapi dan intuitif.'
+      },
+      {
+        title: 'Perbaikan Autoplay Adzan 🔊',
+        description: 'Memperbaiki masalah bug notifikasi Adzan yang dibisukan oleh browser. Kini adzan dipastikan berbunyi saat waktu sholat tiba meskipun aplikasi berada di background!'
+      },
+      {
+        title: 'Perbaikan Bug Ayat Kotak-Kotak 🐛',
+        description: 'Memperbaiki masalah pada beberapa perangkat HP (terutama OS lawas) yang menampilkan karakter kotak-kotak () di akhir teks Arab karena font bawaan yang tidak mendukung karakter kaligrafi penutup ayat.'
+      }
+    ]
+  },
+  {
     version: '2.0',
     date: '6 Juni 2026',
-    isNew: true,
+    isNew: false,
     items: [
       {
         title: 'Desain Baru & Glassmorphism 🎨',
@@ -306,7 +345,7 @@ export default function Changelog({ onClose }) {
   return createPortal(
     <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in ${darkMode ? 'bg-black/60' : 'bg-white/40'}`}>
       <div className={`w-full max-w-md max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col relative overflow-hidden transform transition-all ${darkMode ? 'glass-clay-dark' : 'glass-clay-light'}`}>
-        
+
         {/* Close Button Top Right */}
         <button
           onClick={onClose}
@@ -317,36 +356,33 @@ export default function Changelog({ onClose }) {
 
         {/* Top Header */}
         <div className={`flex flex-col items-center pt-10 pb-6 px-6 relative shrink-0 ${darkMode ? 'bg-gradient-to-b from-primary/10 to-transparent' : 'bg-gradient-to-b from-primary/5 to-transparent'}`}>
-          <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center mb-4 shadow-sm overflow-hidden p-3 border ${
-            darkMode ? 'bg-slate-800 border-white/5' : 'bg-white border-slate-100'
-          }`}>
+          <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center mb-4 shadow-sm overflow-hidden p-3 border ${darkMode ? 'bg-slate-800 border-white/5' : 'bg-white border-slate-100'
+            }`}>
             <img src="/icon.png" alt="Logo SholatKu" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className={`font-heading text-2xl font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>SholatKu</h1>
-          <p className={`text-sm mb-5 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>v2.0</p>
-          
-          <div className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${
-            darkMode ? 'bg-slate-800 text-slate-300 border border-white/5' : 'bg-slate-50 text-slate-600 border border-slate-200'
-          }`}>
+          <p className={`text-sm mb-5 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>v2.1</p>
+
+          <div className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${darkMode ? 'bg-slate-800 text-slate-300 border border-white/5' : 'bg-slate-50 text-slate-600 border border-slate-200'
+            }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${darkMode ? 'bg-slate-500' : 'bg-slate-400'}`}></span>
-            <span>Update: 6 Juni 2026</span>
+            <span>Update: 13 Juni 2026</span>
           </div>
         </div>
 
         {/* Content Scrollable */}
         <div className="flex-1 overflow-y-auto px-6 md:px-8 pb-8 custom-scrollbar">
           <h3 className={`text-sm font-bold uppercase tracking-wider mb-6 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Apa yang Baru</h3>
-          
+
           <div className={`relative pl-6 space-y-10 border-l-[3px] ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
             {changelogData.map((release, index) => (
               <div key={release.version} className="relative">
                 {/* Timeline Dot */}
                 <div className={`absolute -left-[31px] p-1 rounded-full ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
-                  <div className={`w-[14px] h-[14px] rounded-full flex items-center justify-center ${
-                    release.isNew 
-                      ? 'bg-primary shadow-[0_0_0_4px_rgba(13,150,139,0.2)]' 
+                  <div className={`w-[14px] h-[14px] rounded-full flex items-center justify-center ${release.isNew
+                      ? 'bg-primary shadow-[0_0_0_4px_rgba(13,150,139,0.2)]'
                       : darkMode ? 'bg-slate-700' : 'bg-slate-300'
-                  }`}>
+                    }`}>
                     {release.isNew && <div className="w-[6px] h-[6px] bg-white rounded-full"></div>}
                   </div>
                 </div>
@@ -355,15 +391,13 @@ export default function Changelog({ onClose }) {
                 <div className="flex items-center justify-between mb-4 -mt-1">
                   <h4 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>v{release.version}</h4>
                   {release.isNew ? (
-                    <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
-                      darkMode ? 'bg-primary/20 text-primary border-primary/30' : 'bg-primary/10 text-primary-dark border-primary/20'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${darkMode ? 'bg-primary/20 text-primary border-primary/30' : 'bg-primary/10 text-primary-dark border-primary/20'
+                      }`}>
                       Baru
                     </span>
                   ) : (
-                    <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
-                      darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
-                    }`}>
+                    <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
+                      }`}>
                       {release.date}
                     </span>
                   )}
@@ -386,14 +420,13 @@ export default function Changelog({ onClose }) {
             ))}
           </div>
         </div>
-        
+
         {/* Bottom Action Footer */}
         <div className={`p-5 border-t shrink-0 ${darkMode ? 'border-white/5 bg-slate-800/30' : 'border-white/40 bg-white/40'}`}>
-          <button 
+          <button
             onClick={onClose}
-            className={`w-full py-3.5 font-bold uppercase tracking-wider text-xs rounded-xl transition-all shadow-sm ${
-              darkMode ? 'bg-primary text-white hover:bg-emerald-500' : 'bg-primary text-white hover:bg-primary-dark'
-            }`}
+            className={`w-full py-3.5 font-bold uppercase tracking-wider text-xs rounded-xl transition-all shadow-sm ${darkMode ? 'bg-primary text-white hover:bg-emerald-500' : 'bg-primary text-white hover:bg-primary-dark'
+              }`}
           >
             Tutup
           </button>

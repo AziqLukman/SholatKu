@@ -6,6 +6,44 @@ Pengembangan aplikasi ini mengikuti kaidah [*Semantic Versioning*](https://semve
 
 ---
 
+## [v2.1.0] - 13-06-2026
+**Tampilan Al-Qur'an Lebih Fleksibel, Metode Hafalan Al-Hufaz & Tajwid Warna**
+Fokus pada peningkatan kualitas hafalan dan bacaan Al-Qur'an.
+
+### 📖 Fitur Baru
+- **Navigasi Cerdas (Juz & Hafalan)**: Penambahan tab navigasi di menu utama untuk mengakses Juz secara instan dan filter otomatis untuk surat-surat yang sedang dihafal.
+- **Jump Modal Interaktif**: Kemudahan mencari ayat, pindah surat, atau melompat ke Juz lain langsung dari halaman bacaan ayat tanpa harus kembali ke menu utama.
+- **Toggle Latin & Terjemahan**: Penambahan tombol cepat di navigasi halaman Al-Qur'an untuk menyembunyikan teks Latin dan Terjemahan secara instan.
+- **Metode Hafalan Al-Hufaz**: Fitur membagi ayat dalam 5 blok warna dengan counter repetisi target 40x per blok.
+- **Tajwid Warna**: Visualisasi hukum tajwid interaktif pada tiap ayat dengan warna yang rapi dan intuitif.
+- **Dukung SholatKu via QRIS**: Tambahan opsi untuk mendukung developer via QRIS bebas potongan di menu Setelan.
+
+### 🐛 Perbaikan Bug
+- Memperbaiki bug notifikasi Adzan yang dibisukan browser saat di background.
+- Memperbaiki bug karakter kotak-kotak di beberapa HP Android lawas.
+
+---
+
+## [v2.0.0] - 06-06-2026
+**Desain Baru & Asisten AI Islami**
+Pembaruan antarmuka besar-besaran dan integrasi kecerdasan buatan.
+
+### 🎨 Fitur Baru
+- **Desain Baru & Glassmorphism**: Perombakan tampilan menjadi lebih elegan dan premium dengan efek transparan.
+- **Asisten AI Islami**: Chatbot cerdas untuk tanya jawab agama menggunakan input suara.
+- **Radar Masjid Terdekat**: Peta interaktif canggih mendeteksi lokasi untuk mencari masjid di sekitar.
+
+---
+
+## [v1.9.0] - 30-05-2026
+**Perbaikan Bug & Optimasi Akses API**
+
+### ⚡ Peningkatan Performa
+- Mengoptimalkan pemanggilan request API agar lebih hemat data.
+- Refactoring komponen kalender untuk performa yang lebih stabil.
+
+---
+
 ## [v1.8.0] - 19-03-2026
 **THR Spesial Lebaran Ekstra & Interaksi Premium**
 Fokus pada merayakan hari kemenangan setelah Ramadhan selesai dengan fitur Amplop THR yang interaktif, mewah, dan aman.

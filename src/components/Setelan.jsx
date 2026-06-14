@@ -21,6 +21,7 @@ export default function Setelan() {
   const [searching, setSearching] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
+  const [showDonasi, setShowDonasi] = useState(false)
   const [isStandalone, setIsStandalone] = useState(true) // Default true to avoid flash
   const [platform, setPlatform] = useState('desktop')
   const [showIosGuide, setShowIosGuide] = useState(false)
@@ -113,6 +114,8 @@ export default function Setelan() {
       const perm = await requestNotificationPermission()
       if (perm === 'granted') {
         setNotificationsEnabled(true)
+      } else {
+        alert('Gagal mengaktifkan notifikasi. Pastikan browser/HP kamu mengizinkan notifikasi untuk website ini.')
       }
     } else {
       setNotificationsEnabled(false)
@@ -124,6 +127,8 @@ export default function Setelan() {
       const perm = await requestNotificationPermission()
       if (perm === 'granted') {
         setImsakNotifEnabled(true)
+      } else {
+        alert('Gagal mengaktifkan notifikasi imsak. Pastikan browser/HP kamu mengizinkan notifikasi untuk website ini.')
       }
     } else {
       setImsakNotifEnabled(false)
@@ -535,7 +540,28 @@ export default function Setelan() {
       {/* Tentang */}
       <div>
         <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${darkMode ? 'text-primary' : 'text-primary-dark'}`}>Aplikasi</h3>
-        <div className={`rounded-2xl border transition-all overflow-hidden ${darkMode ? 'glass-clay-dark' : 'glass-clay-light'}`}>
+        <div className={`rounded-2xl border transition-all overflow-hidden ${darkMode ? 'glass-clay-dark' : 'glass-clay-light'} divide-y ${darkMode ? 'divide-white/5' : 'divide-slate-200/60'}`}>
+          <button
+            onClick={() => setShowDonasi(true)}
+            className={`w-full flex items-center justify-between p-4 transition-all text-left bento-card-hover ${
+              darkMode ? 'hover:bg-white/5' : 'hover:bg-white/60'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                darkMode ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-600'
+              }`}>
+                <span className="material-icons text-[20px]">volunteer_activism</span>
+              </div>
+              <div>
+                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Dukung SholatKu ☕</span>
+                <span className={`text-[11px] font-medium block mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Traktir kopi developer via QRIS</span>
+              </div>
+            </div>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              <span className="material-icons text-[20px]">chevron_right</span>
+            </div>
+          </button>
           <button
             onClick={() => setShowChangelog(true)}
             className={`w-full flex items-center justify-between p-4 transition-all text-left bento-card-hover ${
@@ -549,7 +575,7 @@ export default function Setelan() {
                 <span className="material-icons text-[20px]">info</span>
               </div>
               <div>
-                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Versi 2.0</span>
+                <span className={`text-sm font-bold block ${darkMode ? 'text-white' : 'text-slate-800'}`}>Versi 2.1</span>
                 <span className={`text-[11px] font-medium block mt-0.5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Lihat apa yang baru (Changelog)</span>
               </div>
             </div>
@@ -562,12 +588,51 @@ export default function Setelan() {
       
       {/* Footer text */}
       <div className={`text-center text-[10px] font-medium space-y-1 pb-4 pt-2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-        <p>SholatKu v2.0 — Jadwal Sholat by Ajekkk</p>
+        <p>SholatKu v2.1 — Jadwal Sholat by Ajekkk</p>
         <p>Data dari <a href="https://equran.id" target="_blank" rel="noopener noreferrer" className={`hover:underline font-bold ${darkMode ? 'text-primary/70' : 'text-primary'}`}>EQuran.id</a> (Kemenag RI)</p>
       </div>
 
       {/* Modal Changelog Popup */}
       {showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
+
+      {/* Modal Donasi QRIS */}
+      {showDonasi && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDonasi(false)}></div>
+          <div className={`relative w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-slide-up border ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+            <div className="absolute top-3 right-3 z-10">
+              <button onClick={() => setShowDonasi(false)} className={`rounded-full p-1.5 transition-colors ${darkMode ? 'bg-slate-900/50 text-slate-300 hover:bg-slate-700' : 'bg-white/80 text-slate-600 hover:bg-slate-200'}`}>
+                <span className="material-icons text-xl block">close</span>
+              </button>
+            </div>
+            
+            <div className={`p-6 text-center ${darkMode ? 'bg-gradient-to-b from-amber-500/10 to-transparent' : 'bg-gradient-to-b from-amber-50 to-transparent'}`}>
+              <div className="w-16 h-16 mx-auto bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                <span className="material-icons text-[32px]">volunteer_activism</span>
+              </div>
+              <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-800'}`}>Dukung SholatKu</h3>
+              <p className={`text-[13px] leading-relaxed mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                Dukung terus pengembangan aplikasi ini dengan mentraktir kopi kreator melalui scan QRIS di bawah ini.
+              </p>
+
+              <div className="bg-white p-4 rounded-2xl shadow-inner mx-auto w-fit mb-6">
+                <img src="/qris-donasi.png" alt="QRIS Donasi" className="w-48 h-48 object-contain" onError={(e) => { e.target.src = '/icon.png'; e.target.classList.add('opacity-50') }} />
+              </div>
+
+              <a 
+                href="/qris-donasi.png" 
+                download="QRIS-SholatKu.png"
+                className={`w-full py-3 rounded-xl font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all shadow-sm ${
+                  darkMode ? 'bg-primary text-white hover:bg-emerald-500' : 'bg-primary text-white hover:bg-primary-dark'
+                }`}
+              >
+                <span className="material-icons text-[16px]">download</span>
+                Simpan QRIS
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* iOS Install Guide Popup */}
       {showIosGuide && (

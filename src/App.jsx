@@ -3,7 +3,7 @@ import { AppProvider, useApp } from './context/AppContext'
 import { AuthProvider } from './context/AuthContext'
 import { useGeolocation } from './hooks/useGeolocation'
 import { usePrayerTimes } from './hooks/usePrayerTimes'
-import { checkPrayerNotification, syncPrayerTimesToSW, subscribeToPush } from './utils/notifications'
+import { checkPrayerNotification, syncPrayerTimesToSW, subscribeToPush, setupAudioUnlocker, playAdzan } from './utils/notifications'
 import Sidebar from './components/Sidebar'
 import BagianUtama from './components/BagianUtama'
 import ListSholat from './components/ListSholat'
@@ -54,6 +54,24 @@ function AppContent() {
       setLoading(false)
     }
   }, [fetchedTimes, hijri])
+
+  // Setup Audio Unlocker (hanya sekali saat app load)
+  useEffect(() => {
+    setupAudioUnlocker()
+  }, [])
+
+  // Listen for PLAY_ADZAN message from Service Worker
+  useEffect(() => {
+    if (!navigator.serviceWorker) return
+    const handleSWMessage = (event) => {
+      if (event.data && event.data.type === 'PLAY_ADZAN') {
+        console.log('[App] Received PLAY_ADZAN from SW')
+        playAdzan()
+      }
+    }
+    navigator.serviceWorker.addEventListener('message', handleSWMessage)
+    return () => navigator.serviceWorker.removeEventListener('message', handleSWMessage)
+  }, [])
 
   // Cek notifikasi: langsung saat load + tiap 15 detik (fallback saat tab aktif)
   useEffect(() => {
@@ -166,6 +184,7 @@ function AppContent() {
 
         {/* Konten Utama */}
         <main 
+          id="main-scroll-container"
           className="flex-1 relative z-10 overflow-y-auto h-screen p-4 lg:p-8"
           style={{ 
             paddingTop: 'max(env(safe-area-inset-top), 1rem)',

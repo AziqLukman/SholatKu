@@ -23,13 +23,46 @@ export async function requestNotificationPermission() {
   if (isNativePlatform()) {
     const LN = await getLocalNotifications()
     if (LN) {
-      const result = await LN.requestPermissions()
-      return result.display
+      try {
+        const perm = await LN.checkPermissions();
+        if (perm.display === 'granted') {
+          return 'granted';
+        }
+        const result = await LN.requestPermissions();
+        return result.display;
+      } catch (err) {
+        console.error('[SholatKu Notif] LN permission error:', err);
+        return 'denied';
+      }
     }
     return 'denied'
   }
-  if (!('Notification' in window)) return Promise.resolve('denied')
-  return Notification.requestPermission()
+
+  // Cek apakah web diakses di environment yang secure (HTTPS / localhost)
+  if (window.isSecureContext === false) {
+    throw new Error('NOT_SECURE');
+  }
+
+  if (!('Notification' in window)) {
+    throw new Error('NOT_SUPPORTED');
+  }
+
+  try {
+    if (Notification.permission === 'granted') {
+      return 'granted';
+    }
+    return await new Promise((resolve) => {
+      const promise = Notification.requestPermission((result) => {
+        resolve(result)
+      })
+      if (promise && promise.then) {
+        promise.then(resolve).catch(() => resolve('denied'))
+      }
+    })
+  } catch (err) {
+    console.error('Error requesting notification permission:', err)
+    return 'denied'
+  }
 }
 
 let nativeNotifId = 1
@@ -288,19 +321,45 @@ export function initAdzanAudio() {
     globalAdzanAudio = new Audio('/audio/adzan/bikin_nangis.mp3')
   }
   
+  // Jika adzan sedang bunyi beneran, jangan diganggu/dipotong!
+  if (!globalAdzanAudio.paused && globalAdzanAudio.currentTime > 0) {
+    return;
+  }
+  
   // Selalu pancing ulang (load, play, pause) tiap kali tombol dipencet 
   // agar browser HP (iOS/Android) nggak "mengunci" lagi audio-nya 
   // setelah aplikasi sempet ditinggal ke background (pas ganti jam).
+  globalAdzanAudio.muted = true; // Mute sementara biar gak ada suara "bocoran" di iOS
   globalAdzanAudio.load()
   const playPromise = globalAdzanAudio.play()
   if (playPromise !== undefined) {
     playPromise.then(() => {
       globalAdzanAudio.pause()
       globalAdzanAudio.currentTime = 0
+      globalAdzanAudio.muted = false; // Kembalikan suara
     }).catch(e => {
       console.log('[SholatKu Notif] Pancingan audio diblokir, tapi gapapa.', e)
+      globalAdzanAudio.muted = false;
     })
   }
+}
+
+let isAudioUnlocked = false;
+
+// Fungsi ini harus dipanggil di global scope (misal App.jsx) agar sekali user interaksi (tap/click), audio ter-unlock
+export function setupAudioUnlocker() {
+  if (isAudioUnlocked) return;
+  const unlock = () => {
+    if (!isAudioUnlocked) {
+      initAdzanAudio();
+      isAudioUnlocked = true;
+      document.removeEventListener('click', unlock);
+      document.removeEventListener('touchstart', unlock);
+      console.log('[SholatKu Notif] Audio autoplay di-unlock melalui interaksi user.');
+    }
+  };
+  document.addEventListener('click', unlock);
+  document.addEventListener('touchstart', unlock);
 }
 
 // Memutar suara adzan
@@ -309,6 +368,7 @@ export function playAdzan() {
     globalAdzanAudio = new Audio('/audio/adzan/bikin_nangis.mp3')
   }
   globalAdzanAudio.currentTime = 0
+  globalAdzanAudio.muted = false
   globalAdzanAudio.play().catch(e => {
     console.error('[SholatKu Notif] Gagal memutar suara adzan (file tidak ada atau diblokir browser).', e)
   })

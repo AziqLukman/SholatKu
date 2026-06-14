@@ -16,22 +16,12 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SYNC_PRAYER_TIMES') {
     prayerData = event.data.payload
     console.log('[SW] Received prayer times:', prayerData)
-    startBackgroundCheck()
   }
 })
 
-// --- Background check loop (fallback saat tab aktif) ---
-function startBackgroundCheck() {
-  if (checkTimer) clearTimeout(checkTimer)
-  scheduleNextCheck()
-}
-
-function scheduleNextCheck() {
-  checkTimer = setTimeout(() => {
-    checkAndNotify()
-    scheduleNextCheck()
-  }, 15000)
-}
+// --- Background check loop removed ---
+// Service Workers are event-driven. setInterval is an anti-pattern here and causes 
+// duplicate notifications because the foreground app also runs a check loop.
 
 const sentNotifs = new Map()
 
@@ -104,6 +94,14 @@ function showNotif(title, body) {
     silent: false,
     vibrate: [200, 100, 200, 100, 200],
     requireInteraction: true,
+    sound: '/audio/adzan/bikin_nangis.mp3',
+  })
+
+  // Perintahkan tab aplikasi yang terbuka untuk memutar suara adzan
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+    for (const client of clientList) {
+      client.postMessage({ type: 'PLAY_ADZAN' })
+    }
   })
 }
 

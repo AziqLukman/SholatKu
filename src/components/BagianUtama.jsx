@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useCountdown } from '../hooks/useCountdown'
 import { resolveIndonesiaLocation } from '../data/indonesiaLocations'
+import { requestNotificationPermission, initAdzanAudio } from '../utils/notifications'
 
 const POPULAR_CITIES = [
   { city: 'Jakarta', lat: -6.2088, lng: 106.8456, provinsi: 'DKI Jakarta', kabkota: 'Kota Jakarta' },
@@ -324,17 +325,29 @@ export default function BagianUtama() {
         </div>
 
         {/* Bottom Action Buttons */}
-        <div className="grid grid-cols-2 gap-3 mt-1">
+        <div className="relative z-10 grid grid-cols-2 gap-3 mt-1">
           <button
             onClick={async () => {
-              const { requestNotificationPermission, initAdzanAudio } = await import('../utils/notifications')
-
-              // Unlock browser audio autoplay policy
-              initAdzanAudio()
+              // Unlock browser audio autoplay policy synchronously to maintain user-gesture on mobile
+              try {
+                initAdzanAudio()
+              } catch (e) { console.error('Audio init error', e) }
 
               if (!notificationsEnabled) {
-                const perm = await requestNotificationPermission()
-                if (perm === 'granted') setNotificationsEnabled(true)
+                try {
+                  const perm = await requestNotificationPermission()
+                  if (perm === 'granted') {
+                    setNotificationsEnabled(true)
+                  } else {
+                    alert('Maaf sob, gagal mengaktifkan adzan. Pastikan kamu sudah memberikan izin notifikasi untuk website ini (cek ikon gembok di URL bar ya).')
+                  }
+                } catch (err) {
+                  if (err.message === 'NOT_SUPPORTED') {
+                    alert('Maaf sob, browser kamu belum mendukung Notifikasi Web.\n\nTips khusus iPhone/Safari: Kamu harus tekan ikon "Share" lalu pilih "Add to Home Screen" dulu agar fitur adzan bisa berfungsi.');
+                  } else {
+                    alert('Maaf sob, fitur notifikasi gagal diaktifkan. Coba buka dari Chrome/Safari versi terbaru atau tambahkan ke Home Screen.');
+                  }
+                }
               } else {
                 setNotificationsEnabled(false)
               }

@@ -37,11 +37,11 @@
         "auth": "lBPn47qC-rxLd4LvliYegw"
       }
     },
-    "lat": -7.3100867,
-    "lng": 112.7498741,
+    "lat": -7.310064,
+    "lng": 112.7498962,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-05-26T11:49:28.688Z"
+    "createdAt": "2026-06-10T10:58:29.802Z"
   },
   {
     "subscription": {
@@ -71,7 +71,7 @@
     "lng": 112.6077,
     "notificationsEnabled": true,
     "imsakNotifEnabled": true,
-    "createdAt": "2026-06-06T14:01:11.605Z"
+    "createdAt": "2026-06-13T08:33:40.527Z"
   },
   {
     "subscription": {
@@ -87,5 +87,20 @@
     "notificationsEnabled": true,
     "imsakNotifEnabled": false,
     "createdAt": "2026-05-31T16:01:58.034Z"
+  },
+  {
+    "subscription": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/e3ZdnysMBls:APA91bGZMDTZj7txtVbxZb6pGvVFua2ZozIDa-x1sXWVVqtkjR93jTymLK1f1U5DFs1kI08rwlnPAHmizlST-obH4eZoxZgmFrGO3as-T-ScfcYWDQaK94d-C6bupNYYRP391PX_mf9H",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BHl-Xtq-uQW8L6yGl209oRK_hHezDYlul3DDkhNepWhXYUk8F8CeeYGcwkZmQDqZIOWXQqDIhe4_TFc-Z5q2rqI",
+        "auth": "HFdGiXn1x274KHMhfcG-UQ"
+      }
+    },
+    "lat": -7.31006,
+    "lng": 112.7498797,
+    "notificationsEnabled": true,
+    "imsakNotifEnabled": true,
+    "createdAt": "2026-06-14T00:08:17.958Z"
   }
 ]

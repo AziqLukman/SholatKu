@@ -64,6 +64,12 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : {}
   })
 
+  // Hufaz Repetisi Data
+  const [hufazRepetisi, setHufazRepetisi] = useState(() => {
+    const saved = localStorage.getItem('sholatku_hufaz_repetisi')
+    return saved ? JSON.parse(saved) : {}
+  })
+
   // AI Modal State
   const [isAiOpen, setAiOpen] = useState('hidden')
 
@@ -83,6 +89,7 @@ export function AppProvider({ children }) {
             if (data['sholatku-haid-mode'] !== undefined) setHaidMode(data['sholatku-haid-mode'])
             if (data['sholatku-ramadhan-start'] !== undefined) setRamadhanStartDate(data['sholatku-ramadhan-start'])
             if (data['sholatku-hafalan']) setHafalanData(data['sholatku-hafalan'])
+            if (data['sholatku_hufaz_repetisi']) setHufazRepetisi(data['sholatku_hufaz_repetisi'])
           }
         } catch (e) {
           console.error("Failed to load cloud data", e)
@@ -117,6 +124,7 @@ export function AppProvider({ children }) {
   useEffect(() => saveState('sholatku-haid-mode', haidMode), [haidMode])
   useEffect(() => saveState('sholatku-ramadhan-start', ramadhanStartDate), [ramadhanStartDate])
   useEffect(() => saveState('sholatku-hafalan', hafalanData), [hafalanData])
+  useEffect(() => saveState('sholatku_hufaz_repetisi', hufazRepetisi), [hufazRepetisi])
 
   const toggleHafalan = (nomorSurat, nomorAyat) => {
     setHafalanData(prev => {
@@ -160,6 +168,7 @@ export function AppProvider({ children }) {
     haidMode, setHaidMode,
     ramadhanStartDate, setRamadhanStartDate,
     hafalanData, toggleHafalan,
+    hufazRepetisi, setHufazRepetisi,
     isAiOpen, setAiOpen,
   }
 

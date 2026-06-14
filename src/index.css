@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
@@ -335,3 +335,224 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle scale pulse for hero elements */
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.5s ease-out;
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================
+   Tab transitions
+   ============================================ */
+.tab-content-enter {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* ============================================
+   Compass
+   ============================================ */
+.compass-needle {
+  transition: transform 0.3s ease-out;
+}
+
+/* ============================================
+   Accordion
+   ============================================ */
+.accordion-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+}
+
+/* ============================================
+   Dark mode transitions
+   ============================================ */
+.dark-transition,
+.dark-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ============================================
+   Responsive Layout
+   ============================================ */
+@media (max-width: 1023px) {
+  .sidebar-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bottom-tab-mobile {
+    display: none;
+  }
+}
+
+/* ============================================
+   SVG Countdown Gauge (NEW)
+   ============================================ */
+.countdown-gauge-track {
+  transition: stroke-dashoffset 0.8s ease-out;
+}
+
+/* ============================================
+   Glass-Bento Interactive Hover (NEW)
+   ============================================ */
+.bento-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-card-hover:hover {
+  transform: translateY(-2px);
+}
+
+.bento-card-hover:active {
+  transform: scale(0.98);
+}
+
+
+/* Elegant Soft UI (NEW) */
+.elegant-card-light {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 16px 40px -12px rgba(13, 150, 139, 0.08);
+  border-radius: 24px;
+}
+
+.elegant-card-dark {
+  background: rgba(11, 27, 24, 0.65);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 24px;
+}
+
+/* Islamic Watermark */
+.islamic-watermark {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20L20 0ZM20 4L7 20L20 36L33 20L20 4Z' fill='currentColor' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ============================================
+   Leaflet Dark Mode Map Filter
+   ============================================ */
+.map-dark-filter .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.map-dark-filter .leaflet-marker-pane,
+.map-dark-filter .leaflet-popup-pane,
+.map-dark-filter .leaflet-shadow-pane {
+  filter: none;
+}
+
+/* Leaflet popup styling override */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: none !important;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================
+   Tajweed Colors
+   ============================================ */
+/* Light Mode */
+.tj-gray { color: #94a3b8; font-weight: 500; }
+.tj-blue-light { color: #0ea5e9; font-weight: 700; }
+.tj-blue-dark { color: #2563eb; font-weight: 700; }
+.tj-red { color: #ef4444; font-weight: 700; }
+.tj-orange { color: #f97316; font-weight: 700; }
+.tj-purple { color: #8b5cf6; font-weight: 700; }
+.tj-green { color: #10b981; font-weight: 700; }
+.tj-pink { color: #ec4899; font-weight: 700; }
+.tj-yellow { color: #eab308; font-weight: 700; }
+.tj-cyan { color: #06b6d4; font-weight: 700; }
+
+/* Dark Mode */
+.dark .tj-gray { color: #64748b; font-weight: 500; }
+.dark .tj-blue-light { color: #38bdf8; font-weight: 700; }
+.dark .tj-blue-dark { color: #60a5fa; font-weight: 700; }
+.dark .tj-red { color: #f87171; font-weight: 700; }
+.dark .tj-orange { color: #fb923c; font-weight: 700; }
+.dark .tj-purple { color: #a78bfa; font-weight: 700; }
+.dark .tj-green { color: #34d399; font-weight: 700; }
+.dark .tj-pink { color: #f472b6; font-weight: 700; }
+.dark .tj-yellow { color: #fde047; font-weight: 700; }
+.dark .tj-cyan { color: #22d3ee; font-weight: 700; }

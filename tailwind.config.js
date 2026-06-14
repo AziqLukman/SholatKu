@@ -25,7 +25,7 @@ export default {
         "display": ["Outfit", "sans-serif"],
         "heading": ["Space Grotesk", "sans-serif"],
         "mono": ["JetBrains Mono", "monospace"],
-        "arabic": ["Amiri", "serif"],
+        "arabic": ["'Amiri Quran'", "Amiri", "serif"],
       },
       borderRadius: {
         "DEFAULT": "0.5rem",
